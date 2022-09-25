@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EmployeeModule } from './employee/employee.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseConfig } from './config/database.config';
 import { validationSchema } from './config/env.validation';
 import { DB_CONFIG } from './commons/constants';
 import { appConfig } from './config/app.config';
 import { CompaniesModule } from './companies/companies.module';
+import { EmployeesModule } from './employees/employees.module';
+import { UsersModule } from './users/users.module';
+import { ManagersModule } from './managers/managers.module';
+import { AdminsModule } from './admins/admins.module';
 
 @Module({
   imports: [
@@ -18,18 +21,22 @@ import { CompaniesModule } from './companies/companies.module';
     }),
 
     TypeOrmModule.forRootAsync({
-      imports: [ConfigService],
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         ...configService.get(DB_CONFIG),
       }),
     }),
 
-    EmployeeModule,
-
     CompaniesModule,
+
+    EmployeesModule,
+
+    UsersModule,
+
+    ManagersModule,
+
+    AdminsModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

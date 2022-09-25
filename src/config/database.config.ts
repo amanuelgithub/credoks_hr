@@ -18,6 +18,20 @@ const postgresqlDataSourceOption: DataSourceOptions = {
   synchronize: true,
 } as DataSourceOptions;
 
+// previously used sqlite database configuration
+// const sqliteDataSourceOption: DataSourceOptions = {
+//   type: 'sqlite',
+//   database: process.env.DATABASE_NAME || 'credoks_hr',
+//   entities: [Employee, Company],
+//   // entities: ['dist/**/*.entity{.ts,.js}'],
+//   // replaced with `autoLoadEntities: true` to automatically import all the entities
+//   logging: true,
+//   migrationsRun: true,
+//   synchronize: true,
+//   autoLoadEntities: true,
+// } as DataSourceOptions;
+
 export const DatabaseConfig = registerAs<DataSourceOptions>(DB_CONFIG, () => {
   return postgresqlDataSourceOption;
+  // return sqliteDataSourceOption;
 });

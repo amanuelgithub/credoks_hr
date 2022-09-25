@@ -3,9 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { APP_CONFIG } from './commons/constants';
 import { IAppConfig } from './config/app.config';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.enableCors();
 
   // get app config
   const configService = app.get(ConfigService);
@@ -14,6 +17,8 @@ async function bootstrap() {
   // setup api global prefix
   const globalPrefix = appConfig.APP_PREFIX;
   app.setGlobalPrefix(globalPrefix);
+
+  app.useGlobalPipes(new ValidationPipe());
 
   const appPort = process.env.PORT || appConfig.APP_PORT;
 
