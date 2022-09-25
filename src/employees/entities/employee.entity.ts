@@ -1,4 +1,4 @@
-import { User } from 'src/users/entities/user.entity';
+import { IUser, User } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
@@ -53,6 +53,7 @@ export interface IEmployee {
   fatherName: string;
   spouseName: string;
   accountNumber: string;
+  user: IUser;
   //   fields related to an employee position
   //   designation: ????
   //   department: ?????

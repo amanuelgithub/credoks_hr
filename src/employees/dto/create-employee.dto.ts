@@ -1,7 +1,8 @@
 import { IsString, IsEnum, IsNotEmpty } from 'class-validator';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { EmployeeStatusEnum } from '../employment-status.enum';
 
-export class CreateEmployeeDto {
+export class CreateEmployeeDto extends CreateUserDto {
   @IsEnum(EmployeeStatusEnum)
   status: EmployeeStatusEnum;
 

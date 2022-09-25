@@ -1,4 +1,4 @@
-import { User } from 'src/users/entities/user.entity';
+import { IUser, User } from 'src/users/entities/user.entity';
 import { Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -13,4 +13,5 @@ export class Manager implements IManager {
 
 export interface IManager {
   id: string;
+  user: IUser;
 }

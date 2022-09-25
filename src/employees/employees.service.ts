@@ -1,20 +1,89 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { Employee } from './entities/employee.entity';
+import { Employee, IEmployee } from './entities/employee.entity';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class EmployeesService {
   constructor(
     @InjectRepository(Employee)
     private employeesRepository: Repository<Employee>,
+    private usersService: UsersService,
   ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
-    const employee = this.employeesRepository.create(createEmployeeDto);
-    return await this.employeesRepository.save(employee);
+    const {
+      // user related properties
+      firstName,
+      lastName,
+      email,
+      phone,
+      password,
+      type,
+      dateOfBirth,
+      gender,
+      // employee related properties
+      status,
+      dateOfJoining,
+      confirmationDate,
+      emergencyContactName,
+      emergencyContactNumber,
+      fatherName,
+      spouseName,
+      accountNumber,
+    } = createEmployeeDto;
+
+    const oldUser = await this.usersService.findUserByEmail(email);
+
+    let employee: IEmployee;
+
+    if (!oldUser) {
+      // salting and hash password
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const createUserDto: CreateUserDto = {
+        firstName,
+        lastName,
+        email,
+        phone,
+        password: hashedPassword,
+        type,
+        dateOfBirth,
+        gender,
+      };
+
+      const createEmployeeSpecificDto = {
+        status,
+        dateOfJoining,
+        confirmationDate,
+        emergencyContactName,
+        emergencyContactNumber,
+        fatherName,
+        spouseName,
+        accountNumber,
+      };
+
+      // create user
+      const user = await this.usersService.create(createUserDto);
+      // create employee
+      employee = this.employeesRepository.create(createEmployeeSpecificDto);
+      // link user to employee
+      employee.user = user;
+
+      return await this.employeesRepository.save(employee);
+    } else {
+      throw new ConflictException('Email is taken!');
+    }
   }
 
   async findAll(): Promise<Employee[]> {
@@ -63,9 +132,7 @@ export class EmployeesService {
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.employeesRepository.delete({ id });
-    if (result.affected === 0) {
-      throw new NotFoundException('Employee Not Found!');
-    }
+    const employee = await this.findOne(id);
+    await this.usersService.remove(employee.user.id);
   }
 }

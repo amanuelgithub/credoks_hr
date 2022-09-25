@@ -1,4 +1,11 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { GenderEnum } from '../gender.enum';
 import { UserTypeEnum } from '../user-type.enum';
 
@@ -21,6 +28,11 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
+  @MinLength(6)
+  @MaxLength(32)
+  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+    message: 'Password is too weak!',
+  })
   password: string;
 
   @IsNotEmpty()
