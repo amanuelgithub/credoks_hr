@@ -4,33 +4,33 @@ import { EmployeeStatusEnum } from '../employment-status.enum';
 
 export class CreateEmployeeDto extends CreateUserDto {
   @IsEnum(EmployeeStatusEnum)
-  status: EmployeeStatusEnum;
+  status?: EmployeeStatusEnum;
 
   @IsNotEmpty()
   @IsString()
-  dateOfJoining: string;
+  dateOfJoining?: string;
 
   @IsNotEmpty()
   @IsString()
-  confirmationDate: string;
+  confirmationDate?: string;
 
   @IsNotEmpty()
   @IsString()
-  emergencyContactName: string;
+  emergencyContactName?: string;
 
   @IsNotEmpty()
   @IsString()
-  emergencyContactNumber: string;
+  emergencyContactNumber?: string;
 
   @IsNotEmpty()
   @IsString()
-  fatherName: string;
+  fatherName?: string;
 
   @IsNotEmpty()
   @IsString()
-  spouseName: string;
+  spouseName?: string;
 
   @IsNotEmpty()
   @IsString()
-  accountNumber: string;
+  accountNumber?: string;
 }

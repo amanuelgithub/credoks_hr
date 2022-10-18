@@ -8,22 +8,22 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { CreateManagerDto } from './dto/create-manager.dto';
-import { UpdateManagerDto } from './dto/update-manager.dto';
-import { IManager, Manager } from './enitities/manager.entity';
+import { CreateHrDto } from './dto/create-hr.dto';
+import { UpdateHrDto } from './dto/update-hr.dto';
+import { Hr, IHR } from './entities/hr.entity';
 import { CreateEmployeeDto } from 'src/employees/dto/create-employee.dto';
 import { EmployeesService } from 'src/employees/employees.service';
 
 @Injectable()
-export class ManagersService {
+export class HrService {
   constructor(
-    @InjectRepository(Manager)
-    private managersRepository: Repository<Manager>,
+    @InjectRepository(Hr) private hrsRepository: Repository<Hr>,
+
     private usersService: UsersService,
     private employeesService: EmployeesService,
   ) {}
 
-  async create(createManagerDto: CreateManagerDto): Promise<Manager> {
+  async create(createHrDto: CreateHrDto): Promise<Hr> {
     const {
       // user related properties
       firstName,
@@ -43,12 +43,12 @@ export class ManagersService {
       fatherName,
       spouseName,
       accountNumber,
-      // manager related properties
-    } = createManagerDto;
+      // hr related properties
+    } = createHrDto;
 
     const oldUser = await this.usersService.findUserByEmail(email);
 
-    let manager: IManager;
+    let hr: IHR;
 
     if (!oldUser) {
       // salting and hash password
@@ -78,9 +78,9 @@ export class ManagersService {
       };
 
       // no properties yet available
-      const createManagerDto = {};
+      const createHrDto = {};
 
-      // create user & save user
+      // create & save user
       const user = await this.usersService.create(createUserDto);
       // create & save employee
       const employee = await this.employeesService.createHrOrManager(
@@ -89,49 +89,46 @@ export class ManagersService {
       );
 
       // create employee
-      manager = this.managersRepository.create(createManagerDto);
-      // link employee to manager
-      manager.employee = employee;
-      // link user to employee
+      hr = this.hrsRepository.create(createHrDto);
+      // link hr to employee
+      hr.employee = employee;
+      // link employee to user
       employee.user = user;
 
-      return await this.managersRepository.save(manager);
+      return await this.hrsRepository.save(hr);
     } else {
       throw new ConflictException('Email is taken!');
     }
   }
 
-  async findAll(): Promise<Manager[]> {
-    const managers = await this.managersRepository.find();
-    if (!managers) {
-      throw new NotFoundException('Managers Not Found!');
+  async findAll(): Promise<Hr[]> {
+    const hrs = await this.hrsRepository.find();
+    if (!hrs) {
+      throw new NotFoundException('hrs Not Found!');
     }
-    return managers;
+    return hrs;
   }
 
-  async findOne(id: string): Promise<Manager> {
-    const manager = await this.managersRepository.findOne({ where: { id } });
-    if (!manager) {
-      throw new NotFoundException('Manager Not Found!');
+  async findOne(id: string): Promise<Hr> {
+    const hr = await this.hrsRepository.findOne({ where: { id } });
+    if (!hr) {
+      throw new NotFoundException('hr Not Found!');
     }
-    return manager;
+    return hr;
   }
 
-  async update(
-    id: string,
-    updateManagerDto: UpdateManagerDto,
-  ): Promise<Manager> {
-    const manager = await this.findOne(id);
+  async update(id: string, updateHrDto: UpdateHrDto): Promise<Hr> {
+    const hr = await this.findOne(id);
 
     // no properties yet available
-    const {} = updateManagerDto;
+    const {} = updateHrDto;
 
-    return await this.managersRepository.save(manager);
+    return await this.hrsRepository.save(hr);
   }
 
   async remove(id: string): Promise<void> {
-    const manager = await this.findOne(id);
-    await this.employeesService.remove(manager.employee.id);
-    await this.usersService.remove(manager.employee.user.id);
+    const hr = await this.findOne(id);
+    await this.employeesService.remove(hr.employee.id);
+    await this.usersService.remove(hr.employee.user.id);
   }
 }

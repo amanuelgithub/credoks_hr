@@ -8,10 +8,6 @@ export class CreateCompanyDto {
 
   @IsNotEmpty()
   @IsString()
-  location: string;
-
-  @IsNotEmpty()
-  @IsString()
   companyLogo: string;
 
   @IsNotEmpty()

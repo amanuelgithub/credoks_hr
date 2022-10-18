@@ -30,7 +30,7 @@ export class AdminsService {
       type,
       dateOfBirth,
       gender,
-      // employee related properties
+      // admin related properties
     } = createAdminDto;
 
     const oldUser = await this.usersService.findUserByEmail(email);
@@ -53,13 +53,13 @@ export class AdminsService {
         gender,
       };
 
-      const createEmployeeSpecificDto = {};
+      const createAdminDto = {};
 
-      // create user
+      // create & save user
       const user = await this.usersService.create(createUserDto);
-      // create employee
-      admin = this.adminsRepository.create(createEmployeeSpecificDto);
-      // link user to employee
+
+      admin = this.adminsRepository.create(createAdminDto);
+
       admin.user = user;
 
       return await this.adminsRepository.save(admin);

@@ -1,4 +1,6 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { Department } from 'src/departments/entities/department.entity';
+import { Location } from 'src/locations/entities/location.entity';
 import { CompanyStatusEnum } from '../company-status.enum';
 
 export class UpdateCompanyDto {
@@ -7,8 +9,10 @@ export class UpdateCompanyDto {
   name: string;
 
   @IsOptional()
-  @IsString()
-  location: string;
+  locations: Location[];
+
+  @IsOptional()
+  departments: Department[];
 
   @IsOptional()
   @IsString()

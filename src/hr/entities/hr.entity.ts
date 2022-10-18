@@ -2,11 +2,11 @@ import { Employee, IEmployee } from 'src/employees/entities/employee.entity';
 import { Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Manager implements IManager {
+export class Hr implements IHR {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => Employee, (employee) => employee.manager, {
+  @OneToOne(() => Employee, (employee) => employee.hr, {
     eager: true,
     onDelete: 'CASCADE',
   })
@@ -14,7 +14,7 @@ export class Manager implements IManager {
   employee: Employee;
 }
 
-export interface IManager {
+export interface IHR {
   id: string;
   employee: IEmployee;
 }

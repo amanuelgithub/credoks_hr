@@ -1,3 +1,3 @@
 import { CreateEmployeeDto } from 'src/employees/dto/create-employee.dto';
 
-export class CreateManagerDto extends CreateEmployeeDto {}
+export class CreateHrDto extends CreateEmployeeDto {}

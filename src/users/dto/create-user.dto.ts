@@ -12,19 +12,19 @@ import { UserTypeEnum } from '../user-type.enum';
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
-  firstName: string;
+  firstName?: string;
 
   @IsNotEmpty()
   @IsString()
-  lastName: string;
+  lastName?: string;
 
   @IsNotEmpty()
   @IsString()
-  email: string;
+  email?: string;
 
   @IsNotEmpty()
   @IsString()
-  phone: string;
+  phone?: string;
 
   @IsNotEmpty()
   @IsString()
@@ -33,11 +33,11 @@ export class CreateUserDto {
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message: 'Password is too weak!',
   })
-  password: string;
+  password?: string;
 
   @IsNotEmpty()
   @IsEnum(UserTypeEnum)
-  type: UserTypeEnum;
+  type?: UserTypeEnum;
 
   @IsNotEmpty()
   @IsString()

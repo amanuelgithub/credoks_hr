@@ -6,7 +6,10 @@ export class Admin implements IAdmin {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => User, { eager: true, onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.admin, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   user: User;
 }

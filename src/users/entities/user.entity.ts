@@ -1,10 +1,11 @@
 import { Admin } from 'src/admins/entities/admin.entity';
+import { Company } from 'src/companies/entities/company.entity';
 import { Employee } from 'src/employees/entities/employee.entity';
-import { Manager } from 'src/managers/enitities/manager.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -41,20 +42,24 @@ export class User implements IUser {
   @Column({ nullable: true })
   gender?: GenderEnum;
 
-  @OneToOne(() => Admin, { onDelete: 'CASCADE' })
-  admin?: Admin;
-
-  @OneToOne(() => Manager, { onDelete: 'CASCADE' })
-  manager?: Manager;
-
-  @OneToOne(() => Employee, { onDelete: 'CASCADE' })
-  employee?: Employee;
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   modifiedAt: Date;
+
+  // entity relation fields //
+  @OneToOne(() => Admin, (admin) => admin.user, { onDelete: 'CASCADE' })
+  admin?: Admin;
+
+  @OneToOne(() => Employee, (employee) => employee.user, {
+    onDelete: 'CASCADE',
+  })
+  employee?: Employee;
+
+  @OneToOne(() => Company, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  company?: Company;
 }
 
 export interface IUser {

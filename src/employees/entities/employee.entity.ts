@@ -1,3 +1,5 @@
+import { Hr } from 'src/hr/entities/hr.entity';
+import { Manager } from 'src/managers/enitities/manager.entity';
 import { IUser, User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -37,14 +39,33 @@ export class Employee implements IEmployee {
   @Column()
   accountNumber: string;
 
-  @OneToOne(() => User, { eager: true, onDelete: 'CASCADE' })
+  @Column({ nullable: true })
+  startsAt: string;
+
+  @Column({ nullable: true })
+  endsAt: string;
+
+  // entity relation fields //
+  @OneToOne(() => User, (user) => user.employee, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   user: User;
+
+  @OneToOne(() => Manager, (manager) => manager.employee, {
+    onDelete: 'CASCADE',
+  })
+  manager?: Manager;
+
+  @OneToOne(() => Hr, (hr) => hr.employee, { onDelete: 'CASCADE' })
+  hr?: Hr;
 }
 
 // reportingManager: undeifined;
 export interface IEmployee {
   id: string;
+  user: IUser;
   status: EmployeeStatusEnum;
   dateOfJoining: string;
   confirmationDate: string;
@@ -53,7 +74,9 @@ export interface IEmployee {
   fatherName: string;
   spouseName: string;
   accountNumber: string;
-  user: IUser;
+  startsAt: string;
+  endsAt: string;
+
   //   fields related to an employee position
   //   designation: ????
   //   department: ?????
