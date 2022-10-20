@@ -33,6 +33,10 @@ export class User implements IUser {
   @Column({ nullable: false })
   password: string;
 
+  // used to store the hashed refresh-token
+  @Column({ nullable: true })
+  hashedRt?: string;
+
   @Column({ nullable: false })
   type: UserTypeEnum;
 

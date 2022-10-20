@@ -46,6 +46,7 @@ export class UsersService {
       email,
       phone,
       password,
+      hashedRt,
       type,
       dateOfBirth,
       gender,
@@ -56,6 +57,7 @@ export class UsersService {
     user.email = email;
     user.phone = phone;
     user.password = password;
+    user.hashedRt = hashedRt;
     user.type = type;
     user.dateOfBirth = dateOfBirth;
     user.gender = gender;

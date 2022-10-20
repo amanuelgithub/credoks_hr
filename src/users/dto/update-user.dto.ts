@@ -5,27 +5,31 @@ import { UserTypeEnum } from '../user-type.enum';
 export class UpdateUserDto {
   @IsOptional()
   @IsString()
-  firstName: string;
+  firstName?: string;
 
   @IsOptional()
   @IsString()
-  lastName: string;
+  lastName?: string;
 
   @IsOptional()
   @IsString()
-  email: string;
+  email?: string;
 
   @IsOptional()
   @IsString()
-  phone: string;
+  phone?: string;
 
   @IsOptional()
   @IsString()
-  password: string;
+  password?: string;
+
+  @IsOptional()
+  @IsString()
+  hashedRt?: string;
 
   @IsOptional()
   @IsEnum(UserTypeEnum)
-  type: UserTypeEnum;
+  type?: UserTypeEnum;
 
   @IsOptional()
   @IsString()
