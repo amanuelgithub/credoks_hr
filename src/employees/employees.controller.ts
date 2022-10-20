@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee } from './entities/employee.entity';
+import { AtGuard } from 'src/auth/guards/at.guard';
 
 @Controller('employees')
 export class EmployeesController {
@@ -21,6 +23,7 @@ export class EmployeesController {
     return this.employeesService.create(createEmployeeDto);
   }
 
+  @UseGuards(AtGuard)
   @Get()
   findAll(): Promise<Employee[]> {
     return this.employeesService.findAll();

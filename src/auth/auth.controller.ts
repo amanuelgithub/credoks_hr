@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import { GetCurrentUserId } from './decorators/get-current-user-id.decorator';
 import { GetCurrentUser } from './decorators/get-current-user.decorator';
 import { Public } from './decorators/public.decorator';
+import { AtGuard } from './guards/at.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RtGuard } from './guards/rt.guard';
 import { Tokens } from './types/tokens.type';
@@ -25,6 +26,8 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
+  @Public()
+  @UseGuards(AtGuard)
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   logout(@GetCurrentUserId() userId: string): Promise<boolean> {
