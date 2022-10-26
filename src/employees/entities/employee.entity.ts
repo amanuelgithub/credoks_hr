@@ -1,20 +1,50 @@
-import { Hr } from 'src/hr/entities/hr.entity';
-import { Manager } from 'src/managers/enitities/manager.entity';
-import { IUser, User } from 'src/users/entities/user.entity';
+import { Company } from 'src/companies/entities/company.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { EmployeeStatusEnum } from '../employment-status.enum';
+import { EmployeeStatusEnum } from '../enums/employment-status.enum';
+import { GenderEnum } from '../enums/gender.enum';
+import { UserTypeEnum } from '../enums/user-type.enum';
 
 @Entity()
 export class Employee implements IEmployee {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ nullable: false })
+  firstName: string;
+
+  @Column({ nullable: false })
+  lastName: string;
+
+  @Column({ nullable: false })
+  email: string;
+
+  @Column({ nullable: false })
+  phone: string;
+
+  @Column({ nullable: false })
+  password: string;
+
+  // used to store the hashed refresh-token
+  @Column({ nullable: true })
+  hashedRt?: string;
+
+  @Column({ nullable: false })
+  type: UserTypeEnum;
+
+  @Column({ nullable: true })
+  dateOfBirth?: string;
+
+  @Column({ nullable: true })
+  gender?: GenderEnum;
+
   @Column()
   status: EmployeeStatusEnum;
 
@@ -45,27 +75,28 @@ export class Employee implements IEmployee {
   @Column({ nullable: true })
   endsAt: string;
 
-  // entity relation fields //
-  @OneToOne(() => User, (user) => user.employee, {
-    eager: true,
-    onDelete: 'CASCADE',
-  })
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  modifiedAt: Date;
+
+  @OneToOne(() => Company, { onDelete: 'CASCADE' })
   @JoinColumn()
-  user: User;
-
-  @OneToOne(() => Manager, (manager) => manager.employee, {
-    onDelete: 'CASCADE',
-  })
-  manager?: Manager;
-
-  @OneToOne(() => Hr, (hr) => hr.employee, { onDelete: 'CASCADE' })
-  hr?: Hr;
+  company?: Company;
 }
 
 // reportingManager: undeifined;
 export interface IEmployee {
   id: string;
-  user: IUser;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+  type: UserTypeEnum;
+  dateOfBirth?: string;
+  gender?: GenderEnum;
   status: EmployeeStatusEnum;
   dateOfJoining: string;
   confirmationDate: string;
@@ -76,7 +107,8 @@ export interface IEmployee {
   accountNumber: string;
   startsAt: string;
   endsAt: string;
-
+  createdAt: Date;
+  modifiedAt: Date;
   //   fields related to an employee position
   //   designation: ????
   //   department: ?????

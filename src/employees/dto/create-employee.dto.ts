@@ -1,8 +1,53 @@
-import { IsString, IsEnum, IsNotEmpty } from 'class-validator';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { EmployeeStatusEnum } from '../employment-status.enum';
+import {
+  IsString,
+  IsEnum,
+  IsNotEmpty,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { EmployeeStatusEnum } from '../enums/employment-status.enum';
+import { GenderEnum } from '../enums/gender.enum';
+import { UserTypeEnum } from '../enums/user-type.enum';
 
-export class CreateEmployeeDto extends CreateUserDto {
+export class CreateEmployeeDto {
+  @IsNotEmpty()
+  @IsString()
+  firstName?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  lastName?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  email?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  phone?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
+  @MaxLength(32)
+  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+    message: 'Password is too weak!',
+  })
+  password?: string;
+
+  @IsNotEmpty()
+  @IsEnum(UserTypeEnum)
+  type?: UserTypeEnum;
+
+  // @IsNotEmpty()
+  @IsString()
+  dateOfBirth?: string;
+
+  @IsNotEmpty()
+  @IsEnum(GenderEnum)
+  gender?: GenderEnum;
+
   @IsEnum(EmployeeStatusEnum)
   status?: EmployeeStatusEnum;
 

@@ -1,61 +1,64 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Tokens } from './types/tokens.type';
 import { jwtConstants } from './constants';
 import { JWTPayload } from './types/jwtPayload.type';
-import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { EmployeesService } from 'src/employees/services/employees.service';
+import { UpdateEmployeeDto } from 'src/employees/dto/update-employee.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private employeesService: EmployeesService,
     private jwtService: JwtService,
   ) {}
 
-  async login(user: any): Promise<Tokens> {
-    if (!user) throw new ForbiddenException('Access Denied');
+  async login(employee: any): Promise<Tokens> {
+    if (!employee) throw new ForbiddenException('Access Denied');
 
-    const tokens = await this.getTokens(user.id, user.email);
-    await this.updateRtHash(user.id, tokens.refresh_token);
+    const tokens = await this.getTokens(employee.id, employee.email);
+    await this.updateRtHash(employee.id, tokens.refresh_token);
 
     return tokens;
   }
 
-  async logout(userId: string): Promise<boolean> {
-    const user = await this.usersService.findOne(userId);
-    await this.usersService.update(user.id, {
+  async logout(employeeId: string): Promise<boolean> {
+    const employee = await this.employeesService.findOne(employeeId);
+    await this.employeesService.update(employee.id, {
       hashedRt: null,
-    } as UpdateUserDto);
+    } as UpdateEmployeeDto);
 
     return true;
   }
 
-  async refreshTokens(userId: string, rt: string): Promise<Tokens> {
-    const user = await this.usersService.findOne(userId);
-    if (!user || !user.hashedRt) throw new ForbiddenException('Access Denied');
+  async refreshTokens(employeeId: string, rt: string): Promise<Tokens> {
+    const employee = await this.employeesService.findOne(employeeId);
+    if (!employee || !employee.hashedRt)
+      throw new ForbiddenException('Access Denied');
 
-    const rtMatches = await bcrypt.compare(rt, user.hashedRt);
+    const rtMatches = await bcrypt.compare(rt, employee.hashedRt);
     if (!rtMatches) throw new ForbiddenException('Access Denied');
 
-    const tokens = await this.getTokens(user.id, user.email);
-    await this.updateRtHash(user.id, tokens.refresh_token);
+    const tokens = await this.getTokens(employee.id, employee.email);
+    await this.updateRtHash(employee.id, tokens.refresh_token);
 
     return tokens;
   }
 
-  async updateRtHash(userId: string, rt: string): Promise<void> {
+  async updateRtHash(employeeId: string, rt: string): Promise<void> {
     // salting and hash refresh token
     const salt = await bcrypt.genSalt();
     const hashedRt = await bcrypt.hash(rt, salt);
 
-    await this.usersService.update(userId, { hashedRt } as UpdateUserDto);
+    await this.employeesService.update(employeeId, {
+      hashedRt,
+    } as UpdateEmployeeDto);
   }
 
-  async getTokens(userId: string, email: string): Promise<Tokens> {
+  async getTokens(employeeId: string, email: string): Promise<Tokens> {
     const jwtPayload: JWTPayload = {
-      sub: userId,
+      sub: employeeId,
       email: email,
     };
 
@@ -78,7 +81,7 @@ export class AuthService {
 
   // used by the local.strategy.ts
   async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.findUserByEmail(email);
+    const user = await this.employeesService.findEmployeeByEmail(email);
     if (user && (await bcrypt.compare(pass, user.password))) {
       const { password, ...result } = user;
       return result;

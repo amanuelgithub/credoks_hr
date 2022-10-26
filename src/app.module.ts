@@ -7,13 +7,9 @@ import { DB_CONFIG } from './commons/constants';
 import { appConfig } from './config/app.config';
 import { CompaniesModule } from './companies/companies.module';
 import { EmployeesModule } from './employees/employees.module';
-import { UsersModule } from './users/users.module';
-import { ManagersModule } from './managers/managers.module';
-import { AdminsModule } from './admins/admins.module';
 import { AuthModule } from './auth/auth.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { LocationsModule } from './locations/locations.module';
-import { HrModule } from './hr/hr.module';
 
 @Module({
   imports: [
@@ -36,19 +32,11 @@ import { HrModule } from './hr/hr.module';
 
     EmployeesModule,
 
-    UsersModule,
-
-    ManagersModule,
-
-    AdminsModule,
-
     AuthModule,
 
     DepartmentsModule,
 
     LocationsModule,
-
-    HrModule,
   ],
 })
 export class AppModule {}
