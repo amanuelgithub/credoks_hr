@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { CompanyStatusEnum } from '../company-status.enum';
@@ -24,13 +24,13 @@ export interface ICompany {
 
 @Entity()
 export class Company implements ICompany {
-  @PrimaryColumn('uuid')
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   companyLogo: string;
 
   @Column()

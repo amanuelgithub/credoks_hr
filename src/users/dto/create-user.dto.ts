@@ -40,7 +40,7 @@ export class CreateUserDto {
   @IsEnum(UserTypeEnum)
   type?: UserTypeEnum;
 
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @IsString()
   dateOfBirth?: string;
 

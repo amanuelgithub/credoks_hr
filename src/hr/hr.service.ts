@@ -83,7 +83,7 @@ export class HrService {
       // create & save user
       const user = await this.usersService.create(createUserDto);
       // create & save employee
-      const employee = await this.employeesService.createHrOrManager(
+      const employee = await this.employeesService.createAttachingUser(
         user,
         createEmployeeDto,
       );

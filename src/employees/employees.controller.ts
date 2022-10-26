@@ -23,7 +23,7 @@ export class EmployeesController {
     return this.employeesService.create(createEmployeeDto);
   }
 
-  @UseGuards(AtGuard)
+  // @UseGuards(AtGuard)
   @Get()
   findAll(): Promise<Employee[]> {
     return this.employeesService.findAll();

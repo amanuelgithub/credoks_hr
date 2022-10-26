@@ -6,11 +6,11 @@ export class CreateEmployeeDto extends CreateUserDto {
   @IsEnum(EmployeeStatusEnum)
   status?: EmployeeStatusEnum;
 
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @IsString()
   dateOfJoining?: string;
 
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @IsString()
   confirmationDate?: string;
 
