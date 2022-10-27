@@ -17,11 +17,8 @@ export class LocationsController {
   constructor(private readonly locationsService: LocationsService) {}
 
   @Post()
-  create(
-    @Param('companyId') companyId: string,
-    @Body() createLocationDto: CreateLocationDto,
-  ): Promise<Location> {
-    return this.locationsService.create(companyId, createLocationDto);
+  create(@Body() createLocationDto: CreateLocationDto): Promise<Location> {
+    return this.locationsService.create(createLocationDto);
   }
 
   @Get()
@@ -29,7 +26,7 @@ export class LocationsController {
     return this.locationsService.findLocations();
   }
 
-  @Get(':companyId')
+  @Get('/company/:companyId')
   findLocationsOfCompany(
     @Param('companyId') companyId: string,
   ): Promise<Location[]> {

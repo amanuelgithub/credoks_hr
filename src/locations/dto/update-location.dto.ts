@@ -6,4 +6,7 @@ export class UpdateLocationDto {
 
   @IsOptional()
   city: string;
+
+  @IsOptional()
+  specificLocationName?: string;
 }

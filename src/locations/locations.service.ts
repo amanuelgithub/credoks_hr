@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CompaniesService } from 'src/companies/companies.service';
 import { Repository } from 'typeorm';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
@@ -10,14 +11,24 @@ export class LocationsService {
   constructor(
     @InjectRepository(Location)
     private locationsRepository: Repository<Location>,
+    private companiesService: CompaniesService,
   ) {}
 
   /** creata a location for a company */
-  async create(
-    companyId: string,
-    createLocationDto: CreateLocationDto,
-  ): Promise<Location> {
-    const location = this.locationsRepository.create(createLocationDto);
+  async create(createLocationDto: CreateLocationDto): Promise<Location> {
+    const { companyId, country, city, specificLocationName } =
+      createLocationDto;
+
+    const company = await this.companiesService.findOne(companyId);
+
+    const location = this.locationsRepository.create({
+      country,
+      city,
+      specificLocationName,
+    });
+
+    location.company = company;
+
     return await this.locationsRepository.save(location);
   }
 
@@ -58,7 +69,11 @@ export class LocationsService {
   ): Promise<Location> {
     const location = await this.findOne(id);
 
-    const {} = updateLocationDto;
+    const { country, city, specificLocationName } = updateLocationDto;
+
+    location.country = country;
+    location.city = city;
+    location.specificLocationName = specificLocationName;
 
     return await this.locationsRepository.save(location);
   }
