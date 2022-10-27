@@ -18,10 +18,9 @@ export class DepartmentsController {
 
   @Post()
   create(
-    @Param('companyId') companyId: string,
     @Body() createDepartmentDto: CreateDepartmentDto,
   ): Promise<Department> {
-    return this.departmentsService.create(companyId, createDepartmentDto);
+    return this.departmentsService.create(createDepartmentDto);
   }
 
   @Get()
@@ -29,7 +28,7 @@ export class DepartmentsController {
     return this.departmentsService.findDepartments();
   }
 
-  @Get(':companyId')
+  @Get('company/:companyId')
   findDepartmentsOfCompany(
     @Param('companyId') companyId: string,
   ): Promise<Department[]> {

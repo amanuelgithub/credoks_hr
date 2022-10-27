@@ -6,4 +6,7 @@ export class CreateDepartmentDto {
 
   @IsNotEmpty()
   description: string;
+
+  @IsNotEmpty()
+  companyId: string;
 }

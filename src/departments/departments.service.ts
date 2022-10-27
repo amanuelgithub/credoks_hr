@@ -15,13 +15,16 @@ export class DepartmentsService {
   ) {}
 
   /** create a department for a company */
-  async create(
-    companyId: string,
-    createDepartmentDto: CreateDepartmentDto,
-  ): Promise<Department> {
-    const department = this.departmentsRepository.create(createDepartmentDto);
+  async create(createDepartmentDto: CreateDepartmentDto): Promise<Department> {
+    const { name, description, companyId } = createDepartmentDto;
 
     const company = await this.companiesService.findOne(companyId);
+
+    const department = this.departmentsRepository.create({
+      name,
+      description,
+    } as CreateDepartmentDto);
+
     department.company = company;
 
     return await this.departmentsRepository.save(department);
