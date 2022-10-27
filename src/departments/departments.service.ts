@@ -69,7 +69,10 @@ export class DepartmentsService {
   ): Promise<Department> {
     const department = await this.findOne(id);
 
-    const {} = updateDepartmentDto;
+    const { name, description } = updateDepartmentDto;
+
+    department.name = name;
+    department.description = description;
 
     return await this.departmentsRepository.save(department);
   }
