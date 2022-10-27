@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,6 +12,7 @@ import {
 import { EmployeeStatusEnum } from '../enums/employment-status.enum';
 import { GenderEnum } from '../enums/gender.enum';
 import { UserTypeEnum } from '../enums/user-type.enum';
+import { Position } from './position.entity';
 
 @Entity()
 export class Employee implements IEmployee {
@@ -81,9 +83,15 @@ export class Employee implements IEmployee {
   @UpdateDateColumn()
   modifiedAt: Date;
 
+  // entity related fields //
   @OneToOne(() => Company, { onDelete: 'CASCADE' })
   @JoinColumn()
   company?: Company;
+
+  @ManyToOne(() => Position, (position) => position.employees, {
+    nullable: true,
+  })
+  position?: Position;
 }
 
 // reportingManager: undeifined;
