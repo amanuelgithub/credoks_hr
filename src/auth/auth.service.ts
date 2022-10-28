@@ -6,6 +6,9 @@ import { jwtConstants } from './constants';
 import { JWTPayload } from './types/jwtPayload.type';
 import { EmployeesService } from 'src/employees/services/employees.service';
 import { UpdateEmployeeDto } from 'src/employees/dto/update-employee.dto';
+import { Employee } from 'src/employees/entities/employee.entity';
+import { UserTypeEnum } from 'src/employees/enums/user-type.enum';
+import { Company } from 'src/companies/entities/company.entity';
 
 @Injectable()
 export class AuthService {
@@ -14,10 +17,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(employee: any): Promise<Tokens> {
+  async login(employee: Employee): Promise<Tokens> {
     if (!employee) throw new ForbiddenException('Access Denied');
 
-    const tokens = await this.getTokens(employee.id, employee.email);
+    const tokens = await this.getTokens(
+      employee.id,
+      employee.email,
+      employee.type,
+      employee.company,
+    );
     await this.updateRtHash(employee.id, tokens.refresh_token);
 
     return tokens;
@@ -40,7 +48,12 @@ export class AuthService {
     const rtMatches = await bcrypt.compare(rt, employee.hashedRt);
     if (!rtMatches) throw new ForbiddenException('Access Denied');
 
-    const tokens = await this.getTokens(employee.id, employee.email);
+    const tokens = await this.getTokens(
+      employee.id,
+      employee.email,
+      employee.type,
+      employee.company,
+    );
     await this.updateRtHash(employee.id, tokens.refresh_token);
 
     return tokens;
@@ -56,10 +69,21 @@ export class AuthService {
     } as UpdateEmployeeDto);
   }
 
-  async getTokens(employeeId: string, email: string): Promise<Tokens> {
+  async getTokens(
+    employeeId: string,
+    email: string,
+    userType:
+      | UserTypeEnum.ADMIN
+      | UserTypeEnum.EMPLOYEE
+      | UserTypeEnum.HR
+      | UserTypeEnum.MANAGER,
+    company: Company,
+  ): Promise<Tokens> {
     const jwtPayload: JWTPayload = {
       sub: employeeId,
       email: email,
+      userType,
+      company,
     };
 
     const [at, rt] = await Promise.all([
