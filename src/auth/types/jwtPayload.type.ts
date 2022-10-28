@@ -3,11 +3,9 @@ import { UserTypeEnum } from 'src/employees/enums/user-type.enum';
 
 export type JWTPayload = {
   sub: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  userType:
-    | UserTypeEnum.ADMIN
-    | UserTypeEnum.EMPLOYEE
-    | UserTypeEnum.HR
-    | UserTypeEnum.MANAGER;
+  userType: UserTypeEnum;
   company: Company;
 };

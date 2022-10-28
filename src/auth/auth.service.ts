@@ -22,6 +22,8 @@ export class AuthService {
 
     const tokens = await this.getTokens(
       employee.id,
+      employee.firstName,
+      employee.lastName,
       employee.email,
       employee.type,
       employee.company,
@@ -50,6 +52,8 @@ export class AuthService {
 
     const tokens = await this.getTokens(
       employee.id,
+      employee.firstName,
+      employee.lastName,
       employee.email,
       employee.type,
       employee.company,
@@ -71,17 +75,17 @@ export class AuthService {
 
   async getTokens(
     employeeId: string,
+    firstName: string,
+    lastName: string,
     email: string,
-    userType:
-      | UserTypeEnum.ADMIN
-      | UserTypeEnum.EMPLOYEE
-      | UserTypeEnum.HR
-      | UserTypeEnum.MANAGER,
+    userType: UserTypeEnum,
     company: Company,
   ): Promise<Tokens> {
     const jwtPayload: JWTPayload = {
       sub: employeeId,
-      email: email,
+      firstName,
+      lastName,
+      email,
       userType,
       company,
     };
