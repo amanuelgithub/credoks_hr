@@ -1,5 +1,7 @@
 import { Department } from 'src/departments/entities/department.entity';
+import { Employee } from 'src/employees/entities/employee.entity';
 import { Location } from 'src/locations/entities/location.entity';
+import { Payroll } from 'src/payroll/entities/payroll.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,18 +12,6 @@ import {
 } from 'typeorm';
 import { CompanyStatusEnum } from '../company-status.enum';
 
-export interface ICompany {
-  id: string;
-  name: string;
-  companyLogo: string;
-  status: CompanyStatusEnum;
-  summary: string;
-  createdAt: Date;
-  modifiedAt: Date;
-  locations: Location[];
-  departments: Department[];
-}
-
 @Entity()
 export class Company implements ICompany {
   @PrimaryGeneratedColumn('uuid')
@@ -31,10 +21,13 @@ export class Company implements ICompany {
   name: string;
 
   @Column({ nullable: true })
-  companyLogo: string;
+  logo?: string;
+
+  @Column({ type: 'enum', enum: CompanyStatusEnum })
+  companyStatus: CompanyStatusEnum;
 
   @Column()
-  status: CompanyStatusEnum;
+  bussinessType: string;
 
   @Column()
   summary: string;
@@ -43,7 +36,7 @@ export class Company implements ICompany {
   createdAt: Date;
 
   @UpdateDateColumn()
-  modifiedAt: Date;
+  updatedAt: Date;
 
   // entity relation fields //
   @OneToMany(() => Location, (location) => location.company)
@@ -51,4 +44,21 @@ export class Company implements ICompany {
 
   @OneToMany(() => Department, (departments) => departments.company)
   departments: Department[];
+
+  @OneToMany(() => Payroll, (payroll) => payroll.company)
+  payrolls: Payroll[];
+
+  @OneToMany(() => Employee, (employee) => employee.company)
+  employees: Employee[];
+}
+
+export interface ICompany {
+  id: string;
+  name: string;
+  logo?: string;
+  companyStatus: CompanyStatusEnum;
+  bussinessType: string;
+  summary: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

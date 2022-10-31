@@ -1,15 +1,17 @@
+import { Department } from 'src/departments/entities/department.entity';
+import { Employee } from 'src/employees/entities/employee.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Employee } from './employee.entity';
 
 @Entity()
-export class Position {
+export class Position implements IPosition {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -17,10 +19,10 @@ export class Position {
   title: string;
 
   @Column()
-  qualification: string;
+  salary: string;
 
   @CreateDateColumn()
-  createAt: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
@@ -30,10 +32,15 @@ export class Position {
     nullable: true,
   })
   employees?: Employee[];
+
+  @ManyToOne(() => Department, (department) => department.positions)
+  department: Department;
 }
 
 export interface IPosition {
   id: string;
   title: string;
-  qualification: string;
+  salary: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

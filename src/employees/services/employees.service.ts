@@ -64,40 +64,36 @@ export class EmployeesService {
 
     const {
       firstName,
-      lastName,
+      fatherName,
+      grandFatherName,
+      gender,
+      dateOfBirth,
+      type,
       email,
       phone,
       password,
-      type,
-      dateOfBirth,
-      gender,
       hashedRt,
-      status,
+      employmentStatus,
+      maritalStatus,
       dateOfJoining,
       confirmationDate,
-      emergencyContactName,
-      emergencyContactNumber,
-      fatherName,
-      spouseName,
       accountNumber,
     } = updateEmployeeDto;
 
     employee.firstName = firstName;
-    employee.lastName = lastName;
+    employee.fatherName = fatherName;
+    employee.grandFatherName = grandFatherName;
+    employee.gender = gender;
+    employee.dateOfBirth = dateOfBirth;
+    employee.type = type;
     employee.email = email;
     employee.phone = phone;
     employee.password = password;
-    employee.type = type;
-    employee.dateOfBirth = dateOfBirth;
-    employee.gender = gender;
     employee.hashedRt = hashedRt;
-    employee.status = status;
+    employee.employmentStatus = employmentStatus;
+    employee.maritalStatus = maritalStatus;
     employee.dateOfJoining = dateOfJoining;
     employee.confirmationDate = confirmationDate;
-    employee.emergencyContactName = emergencyContactName;
-    employee.emergencyContactNumber = emergencyContactNumber;
-    employee.fatherName = fatherName;
-    employee.spouseName = spouseName;
     employee.accountNumber = accountNumber;
 
     return await this.employeesRepository.save(employee);

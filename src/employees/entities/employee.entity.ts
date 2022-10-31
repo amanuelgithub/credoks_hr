@@ -1,4 +1,7 @@
 import { Company } from 'src/companies/entities/company.entity';
+import { Department } from 'src/departments/entities/department.entity';
+import { Location } from 'src/locations/entities/location.entity';
+import { Position } from 'src/positions/entities/position.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,117 +12,119 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EmployeeStatusEnum } from '../enums/employment-status.enum';
+import { EmploymentStatusEnum } from '../enums/employment-status.enum';
 import { GenderEnum } from '../enums/gender.enum';
+import { MaritalStatusEnum } from '../enums/marital-status.enum';
 import { UserTypeEnum } from '../enums/user-type.enum';
-import { Position } from './position.entity';
 
 @Entity()
 export class Employee implements IEmployee {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false })
+  @Column()
   firstName: string;
 
-  @Column({ nullable: false })
-  lastName: string;
+  @Column()
+  fatherName: string;
 
-  @Column({ nullable: false })
+  @Column()
+  grandFatherName: string;
+
+  @Column({ type: 'enum', enum: GenderEnum })
+  gender: GenderEnum;
+
+  @Column({ type: 'date' })
+  dateOfBirth: Date;
+
+  @Column({ type: 'enum', enum: UserTypeEnum, default: UserTypeEnum.EMPLOYEE })
+  type: UserTypeEnum;
+
+  @Column()
   email: string;
 
-  @Column({ nullable: false })
+  @Column()
   phone: string;
 
-  @Column({ nullable: false })
+  @Column()
   password: string;
 
-  // used to store the hashed refresh-token
   @Column({ nullable: true })
   hashedRt?: string;
 
-  @Column({ nullable: false })
-  type: UserTypeEnum;
+  @Column({
+    type: 'enum',
+    enum: EmploymentStatusEnum,
+    default: EmploymentStatusEnum.TRAINEE,
+  })
+  employmentStatus: EmploymentStatusEnum;
 
-  @Column({ nullable: true })
-  dateOfBirth?: string;
+  @Column({
+    type: 'enum',
+    enum: MaritalStatusEnum,
+    default: MaritalStatusEnum.SINGLE,
+  })
+  maritalStatus: MaritalStatusEnum;
 
-  @Column({ nullable: true })
-  gender?: GenderEnum;
+  @Column({ nullable: true, default: 30 })
+  totalAllowedLeaves?: number;
 
-  @Column()
-  status: EmployeeStatusEnum;
+  @Column({ nullable: true, default: 30 })
+  leaveBalance?: number;
 
-  @Column()
-  dateOfJoining: string;
+  @Column({ type: 'date' })
+  dateOfJoining: Date;
 
-  @Column()
-  confirmationDate: string;
-
-  @Column()
-  emergencyContactName: string;
-
-  @Column()
-  emergencyContactNumber: string;
-
-  @Column({ nullable: true })
-  fatherName: string;
-
-  @Column({ nullable: true })
-  spouseName: string;
+  @Column({ type: 'date' })
+  confirmationDate: Date;
 
   @Column()
-  accountNumber: string;
-
-  @Column({ nullable: true })
-  startsAt: string;
-
-  @Column({ nullable: true })
-  endsAt: string;
+  accountNumber: number;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
-  modifiedAt: Date;
+  updatedAt: Date;
 
   // entity related fields //
-  @OneToOne(() => Company, { onDelete: 'CASCADE' })
+  @OneToOne(() => Company, (company) => company.employees, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
-  company?: Company;
+  company: Company;
 
   @ManyToOne(() => Position, (position) => position.employees, {
     nullable: true,
   })
-  position?: Position;
+  position: Position;
+
+  @ManyToOne(() => Department, (department) => department.employees)
+  department: Department;
+
+  @ManyToOne(() => Location, (location) => location.employees)
+  location: Location;
 }
 
-// reportingManager: undeifined;
-export interface IEmployee {
+interface IEmployee {
   id: string;
   firstName: string;
-  lastName: string;
+  fatherName: string;
+  grandFatherName: string;
+  gender: GenderEnum;
+  dateOfBirth: Date;
+  type: UserTypeEnum;
   email: string;
   phone: string;
   password: string;
-  type: UserTypeEnum;
-  dateOfBirth?: string;
-  gender?: GenderEnum;
-  status: EmployeeStatusEnum;
-  dateOfJoining: string;
-  confirmationDate: string;
-  emergencyContactName: string;
-  emergencyContactNumber: string;
-  fatherName: string;
-  spouseName: string;
-  accountNumber: string;
-  startsAt: string;
-  endsAt: string;
+  hashedRt?: string;
+  employmentStatus: EmploymentStatusEnum;
+  maritalStatus: MaritalStatusEnum;
+  totalAllowedLeaves?: number;
+  leaveBalance?: number;
+  dateOfJoining: Date;
+  confirmationDate: Date;
+  accountNumber: number;
   createdAt: Date;
-  modifiedAt: Date;
-  //   fields related to an employee position
-  //   designation: ????
-  //   department: ?????
-  //   grade: ????
-  //   location: ????
+  updatedAt: Date;
 }

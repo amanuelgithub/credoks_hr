@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
-import { PositionsService } from '../services/positions.service';
-import { CreatePositionDto } from '../dto/create-position.dto';
-import { Position } from '../entities/position.entity';
+import { CreatePositionDto } from './dto/create-position.dto';
+import { Position } from './entities/position.entity';
+import { PositionsService } from './positions.service';
 
 @Controller('positions')
 export class PositionsController {

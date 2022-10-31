@@ -3,14 +3,27 @@ import { EmployeesService } from './services/employees.service';
 import { EmployeesController } from './controllers/employees.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Employee } from './entities/employee.entity';
-import { PositionsService } from './services/positions.service';
-import { Position } from './entities/position.entity';
-import { PositionsController } from './controllers/positions.controller';
+import { QualificationsController } from './controllers/qualifications.controller';
+import { LeaveController } from './controllers/leave.controller';
+import { EmergencyContactsController } from './controllers/emergency-contacts.controller';
+import { QualificationsService } from './services/qualifications.service';
+import { LeaveService } from './services/leave.service';
+import { EmergencyContactsService } from './services/emergency-contacts.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Employee, Position]), Employee, Position],
-  controllers: [EmployeesController, PositionsController],
-  providers: [EmployeesService, PositionsService],
+  imports: [TypeOrmModule.forFeature([Employee]), Employee],
+  controllers: [
+    EmployeesController,
+    QualificationsController,
+    LeaveController,
+    EmergencyContactsController,
+  ],
+  providers: [
+    EmployeesService,
+    QualificationsService,
+    LeaveService,
+    EmergencyContactsService,
+  ],
   exports: [EmployeesService],
 })
 export class EmployeesModule {}

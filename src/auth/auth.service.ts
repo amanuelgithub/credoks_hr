@@ -23,7 +23,7 @@ export class AuthService {
     const tokens = await this.getTokens(
       employee.id,
       employee.firstName,
-      employee.lastName,
+      employee.fatherName,
       employee.email,
       employee.type,
       employee.company,
@@ -53,7 +53,7 @@ export class AuthService {
     const tokens = await this.getTokens(
       employee.id,
       employee.firstName,
-      employee.lastName,
+      employee.fatherName,
       employee.email,
       employee.type,
       employee.company,

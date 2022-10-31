@@ -6,8 +6,9 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { EmployeeStatusEnum } from '../enums/employment-status.enum';
+import { EmploymentStatusEnum } from '../enums/employment-status.enum';
 import { GenderEnum } from '../enums/gender.enum';
+import { MaritalStatusEnum } from '../enums/marital-status.enum';
 import { UserTypeEnum } from '../enums/user-type.enum';
 
 export class CreateEmployeeDto {
@@ -17,7 +18,23 @@ export class CreateEmployeeDto {
 
   @IsNotEmpty()
   @IsString()
-  lastName?: string;
+  fatherName?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  grandFatherName: string;
+
+  @IsNotEmpty()
+  @IsEnum(GenderEnum)
+  gender?: GenderEnum;
+
+  // @IsNotEmpty()
+  @IsString()
+  dateOfBirth?: Date;
+
+  @IsNotEmpty()
+  @IsEnum(UserTypeEnum)
+  type?: UserTypeEnum;
 
   @IsNotEmpty()
   @IsString()
@@ -36,46 +53,21 @@ export class CreateEmployeeDto {
   })
   password?: string;
 
-  @IsNotEmpty()
-  @IsEnum(UserTypeEnum)
-  type?: UserTypeEnum;
+  @IsEnum(EmploymentStatusEnum)
+  employmentStatus?: EmploymentStatusEnum;
+
+  @IsEnum(MaritalStatusEnum)
+  maritalStatus: MaritalStatusEnum;
 
   // @IsNotEmpty()
   @IsString()
-  dateOfBirth?: string;
-
-  @IsNotEmpty()
-  @IsEnum(GenderEnum)
-  gender?: GenderEnum;
-
-  @IsEnum(EmployeeStatusEnum)
-  status?: EmployeeStatusEnum;
+  dateOfJoining?: Date;
 
   // @IsNotEmpty()
   @IsString()
-  dateOfJoining?: string;
-
-  // @IsNotEmpty()
-  @IsString()
-  confirmationDate?: string;
+  confirmationDate?: Date;
 
   @IsNotEmpty()
   @IsString()
-  emergencyContactName?: string;
-
-  @IsNotEmpty()
-  @IsString()
-  emergencyContactNumber?: string;
-
-  @IsNotEmpty()
-  @IsString()
-  fatherName?: string;
-
-  @IsNotEmpty()
-  @IsString()
-  spouseName?: string;
-
-  @IsNotEmpty()
-  @IsString()
-  accountNumber?: string;
+  accountNumber: number;
 }

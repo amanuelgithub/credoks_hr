@@ -43,8 +43,8 @@ export class CompaniesService {
 
     company.name = name;
     company.locations = locations;
-    company.companyLogo = companyLogo;
-    company.status = status;
+    company.logo = companyLogo;
+    company.companyStatus = status;
 
     return await this.companiesRepository.save(company);
   }

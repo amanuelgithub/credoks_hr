@@ -1,9 +1,11 @@
 import { Company } from 'src/companies/entities/company.entity';
+import { Employee } from 'src/employees/entities/employee.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -23,14 +25,17 @@ export class Location implements ILocation {
   specificLocationName?: string;
 
   @CreateDateColumn()
-  createdAt: string;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: string;
+  updatedAt: Date;
 
   // entity relation fields //
-  @ManyToOne(() => Company)
+  @ManyToOne(() => Company, (company) => company.locations)
   company: Company;
+
+  @OneToMany(() => Employee, (employee) => employee.location)
+  employees: Employee[];
 }
 
 export interface ILocation {
@@ -38,6 +43,6 @@ export interface ILocation {
   country: string;
   city: string;
   specificLocationName?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
