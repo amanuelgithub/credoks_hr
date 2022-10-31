@@ -75,5 +75,9 @@ export class UpdateEmployeeDto {
 
   @IsOptional()
   @IsString()
+  tinNumber: string;
+
+  @IsOptional()
+  @IsString()
   accountNumber: number;
 }

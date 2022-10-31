@@ -69,5 +69,9 @@ export class CreateEmployeeDto {
 
   @IsNotEmpty()
   @IsString()
+  tinNumber: string;
+
+  @IsNotEmpty()
+  @IsString()
   accountNumber: number;
 }

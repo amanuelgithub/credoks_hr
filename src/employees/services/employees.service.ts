@@ -77,6 +77,7 @@ export class EmployeesService {
       maritalStatus,
       dateOfJoining,
       confirmationDate,
+      tinNumber,
       accountNumber,
     } = updateEmployeeDto;
 
@@ -94,6 +95,7 @@ export class EmployeesService {
     employee.maritalStatus = maritalStatus;
     employee.dateOfJoining = dateOfJoining;
     employee.confirmationDate = confirmationDate;
+    employee.tinNumber = tinNumber;
     employee.accountNumber = accountNumber;
 
     return await this.employeesRepository.save(employee);

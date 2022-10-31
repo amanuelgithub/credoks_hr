@@ -79,6 +79,9 @@ export class Employee implements IEmployee {
   confirmationDate: Date;
 
   @Column()
+  tinNumber: string;
+
+  @Column()
   accountNumber: number;
 
   @CreateDateColumn()
@@ -124,6 +127,7 @@ interface IEmployee {
   leaveBalance?: number;
   dateOfJoining: Date;
   confirmationDate: Date;
+  tinNumber: string;
   accountNumber: number;
   createdAt: Date;
   updatedAt: Date;
