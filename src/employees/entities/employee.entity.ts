@@ -82,7 +82,7 @@ export class Employee implements IEmployee {
   tinNumber: string;
 
   @Column()
-  accountNumber: number;
+  accountNumber: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -128,7 +128,7 @@ interface IEmployee {
   dateOfJoining: Date;
   confirmationDate: Date;
   tinNumber: string;
-  accountNumber: number;
+  accountNumber: string;
   createdAt: Date;
   updatedAt: Date;
 }

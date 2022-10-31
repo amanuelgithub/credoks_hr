@@ -79,5 +79,5 @@ export class UpdateEmployeeDto {
 
   @IsOptional()
   @IsString()
-  accountNumber: number;
+  accountNumber: string;
 }

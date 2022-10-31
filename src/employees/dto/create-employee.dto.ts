@@ -73,5 +73,5 @@ export class CreateEmployeeDto {
 
   @IsNotEmpty()
   @IsString()
-  accountNumber: number;
+  accountNumber: string;
 }
