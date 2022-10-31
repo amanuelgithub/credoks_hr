@@ -9,9 +9,10 @@ import { EmergencyContactsController } from './controllers/emergency-contacts.co
 import { QualificationsService } from './services/qualifications.service';
 import { LeaveService } from './services/leave.service';
 import { EmergencyContactsService } from './services/emergency-contacts.service';
+import { CaslModule } from 'src/casl/casl.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Employee]), Employee],
+  imports: [TypeOrmModule.forFeature([Employee]), Employee, CaslModule],
   controllers: [
     EmployeesController,
     QualificationsController,

@@ -13,6 +13,7 @@ import { CreateEmployeeDto } from '../dto/create-employee.dto';
 import { UpdateEmployeeDto } from '../dto/update-employee.dto';
 import { Employee } from '../entities/employee.entity';
 import { AtGuard } from 'src/auth/guards/at.guard';
+import { PoliciesGuard } from 'src/casl/policies.guard';
 
 @Controller('employees')
 export class EmployeesController {
@@ -23,7 +24,7 @@ export class EmployeesController {
     return this.employeesService.create(createEmployeeDto);
   }
 
-  // @UseGuards(AtGuard)
+  @UseGuards(AtGuard, PoliciesGuard)
   @Get()
   findAll(): Promise<Employee[]> {
     return this.employeesService.findAll();
