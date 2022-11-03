@@ -1,6 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenError } from '@casl/ability';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
 import { CompaniesService } from 'src/companies/companies.service';
+import { UserTypeEnum } from 'src/employees/enums/user-type.enum';
 import { Repository } from 'typeorm';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
@@ -12,11 +20,19 @@ export class DepartmentsService {
     @InjectRepository(Department)
     private departmentsRepository: Repository<Department>,
     private companiesService: CompaniesService,
+    private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   /** create a department for a company */
-  async create(createDepartmentDto: CreateDepartmentDto): Promise<Department> {
+  async createDepartmentForCompany(
+    requester: any,
+    createDepartmentDto: CreateDepartmentDto,
+  ): Promise<Department> {
     const { name, description, companyId } = createDepartmentDto;
+
+    if (await this.departmentExistsWithSameName(name)) {
+      throw new ConflictException('Department with same name already exists!');
+    }
 
     const company = await this.companiesService.findOne(companyId);
 
@@ -24,10 +40,22 @@ export class DepartmentsService {
       name,
       description,
     } as CreateDepartmentDto);
-
+    // make a relation
     department.company = company;
 
-    return await this.departmentsRepository.save(department);
+    const requesterAbility = this.caslAbilityFactory.createForUser(requester);
+
+    try {
+      ForbiddenError.from(requesterAbility)
+        .setMessage('You are not allowed to create department!')
+        .throwUnlessCan(Action.Create, department);
+
+      return await this.departmentsRepository.save(department);
+    } catch (error) {
+      if (error instanceof ForbiddenError) {
+        throw new ForbiddenException();
+      }
+    }
   }
 
   /** return all departments for all companies */
@@ -40,7 +68,21 @@ export class DepartmentsService {
   }
 
   /** return all departments of a company */
-  async findDepartmentsOfCompany(companyId: string): Promise<Department[]> {
+  async findDepartmentsByCompany(
+    requester: any,
+    companyId: string,
+  ): Promise<Department[]> {
+    // throw error based on user type and companyId
+    if (requester.type === UserTypeEnum.EMPLOYEE) {
+      throw new ForbiddenException();
+    } else if (
+      (requester.type === UserTypeEnum.MANAGER ||
+        requester.type === UserTypeEnum.HR) &&
+      requester?.companyId !== companyId
+    ) {
+      throw new ForbiddenException();
+    }
+
     const companyDepartments = await this.departmentsRepository
       .createQueryBuilder('department')
       .where('department.companyId = :companyId', { companyId })
@@ -53,28 +95,51 @@ export class DepartmentsService {
     return companyDepartments;
   }
 
-  async findOne(id: string): Promise<Department> {
-    const department = await this.departmentsRepository.findOne({
-      where: { id },
-    });
-    if (!department) {
-      throw new NotFoundException('Department Not Found!');
+  async findOneDepartment(requestor: any, id: string): Promise<Department> {
+    const department = await this.findDepartmentById(id);
+
+    const requestorAbility = this.caslAbilityFactory.createForUser(requestor);
+
+    try {
+      ForbiddenError.from(requestorAbility).throwUnlessCan(
+        Action.Read,
+        department,
+      );
+
+      return department;
+    } catch (error) {
+      if (error instanceof ForbiddenError) {
+        throw new ForbiddenException(error.message);
+      }
     }
-    return department;
   }
 
-  async update(
+  async updateDepartment(
+    requester: any,
     id: string,
     updateDepartmentDto: UpdateDepartmentDto,
   ): Promise<Department> {
-    const department = await this.findOne(id);
+    const department = await this.findDepartmentById(id);
 
-    const { name, description } = updateDepartmentDto;
+    const requestorAbility = this.caslAbilityFactory.createForUser(requester);
 
-    department.name = name;
-    department.description = description;
+    try {
+      ForbiddenError.from(requestorAbility).throwUnlessCan(
+        Action.Update,
+        department,
+      );
 
-    return await this.departmentsRepository.save(department);
+      const { name, description } = updateDepartmentDto;
+
+      department.name = name;
+      department.description = description;
+
+      return await this.departmentsRepository.save(department);
+    } catch (error) {
+      if (error instanceof ForbiddenError) {
+        throw new ForbiddenException(error.message);
+      }
+    }
   }
 
   async remove(id: string): Promise<void> {
@@ -82,5 +147,28 @@ export class DepartmentsService {
     if (result.affected === 0) {
       throw new NotFoundException('Department Not Found!');
     }
+  }
+
+  //=================================================================================//
+  // Methods below this lien are not directly being used by the employees-controller //
+  //=================================================================================//
+  async departmentExistsWithSameName(name: string): Promise<boolean> {
+    const employee = await this.departmentsRepository.findOne({
+      where: { name },
+    });
+
+    return employee ? true : false;
+  }
+
+  async findDepartmentById(id: string): Promise<Department> {
+    const department = await this.departmentsRepository.findOne({
+      where: { id },
+    });
+
+    if (!department) {
+      throw new NotFoundException('Department not found!');
+    }
+
+    return department;
   }
 }

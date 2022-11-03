@@ -52,19 +52,30 @@ export class CaslAbilityFactory {
       // gives fullright over-all subjects
       can(Action.Manage, 'all');
     } else if (user?.type === UserTypeEnum.MANAGER) {
+      // EMPLOYEE
       // can only read,create, and update if only employee's company === managers company
       can(Action.Create, Employee, { company: { $eq: user.company } });
       can(Action.Update, Employee, { company: { $eq: user.company } });
       can(Action.Read, Employee, { company: { $eq: user.company } });
       cannot(Action.Delete, Employee);
+
+      // DEPARTMENT
+      // manager  can create, update and read a deparrtment in his/her company
+      cannot(Action.Manage, Department);
+      can(Action.Create, Department, { company: { $eq: user.company } });
+      can(Action.Update, Department, { company: { $eq: user.company } });
+      can(Action.Read, Department, { company: { $eq: user.company } });
     } else if (user?.type === UserTypeEnum.HR) {
+      // EMPLOYEE
       // can only read,create, and update if only employee's company === managers company
       can(Action.Read, Employee, { company: { $eq: user.company } });
       can(Action.Create, Employee, { company: { $eq: user.company } });
       can(Action.Update, Employee, { company: { $eq: user.company } });
-      cannot(Action.Delete, Employee).because(
-        'You are neither hr, manager nor admin...haha :)',
-      );
+      cannot(Action.Delete, Employee);
+
+      // DEPARTMENT
+      // hr can only read departments of their respective company
+      can(Action.Read, Department, { company: { $eq: user.company } });
     } else if (user?.type === UserTypeEnum.EMPLOYEE) {
       cannot(Action.Manage, Employee);
       // Employee can only read and update their own informations
