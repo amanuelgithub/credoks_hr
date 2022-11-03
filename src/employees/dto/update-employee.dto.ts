@@ -30,7 +30,7 @@ export class UpdateEmployeeDto {
 
   @IsOptional()
   @IsString()
-  dateOfBirth?: Date;
+  dateOfBirth?: string;
 
   @IsOptional()
   @IsEnum(UserTypeEnum)
@@ -67,11 +67,11 @@ export class UpdateEmployeeDto {
 
   @IsOptional()
   @IsString()
-  dateOfJoining: Date;
+  dateOfJoining: string;
 
   @IsOptional()
   @IsString()
-  confirmationDate: Date;
+  confirmationDate: string;
 
   @IsOptional()
   @IsString()

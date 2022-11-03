@@ -8,7 +8,6 @@ import { EmployeesService } from 'src/employees/services/employees.service';
 import { UpdateEmployeeDto } from 'src/employees/dto/update-employee.dto';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { UserTypeEnum } from 'src/employees/enums/user-type.enum';
-import { Company } from 'src/companies/entities/company.entity';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +25,7 @@ export class AuthService {
       employee.fatherName,
       employee.email,
       employee.type,
-      employee.company,
+      employee.company?.id,
     );
     await this.updateRtHash(employee.id, tokens.refresh_token);
 
@@ -34,7 +33,7 @@ export class AuthService {
   }
 
   async logout(employeeId: string): Promise<boolean> {
-    const employee = await this.employeesService.findOne(employeeId);
+    const employee = await this.employeesService.findEmployeeById(employeeId);
     await this.employeesService.update(employee.id, {
       hashedRt: null,
     } as UpdateEmployeeDto);
@@ -43,7 +42,7 @@ export class AuthService {
   }
 
   async refreshTokens(employeeId: string, rt: string): Promise<Tokens> {
-    const employee = await this.employeesService.findOne(employeeId);
+    const employee = await this.employeesService.findEmployeeById(employeeId);
     if (!employee || !employee.hashedRt)
       throw new ForbiddenException('Access Denied');
 
@@ -56,7 +55,7 @@ export class AuthService {
       employee.fatherName,
       employee.email,
       employee.type,
-      employee.company,
+      employee.company?.id,
     );
     await this.updateRtHash(employee.id, tokens.refresh_token);
 
@@ -78,16 +77,16 @@ export class AuthService {
     firstName: string,
     lastName: string,
     email: string,
-    userType: UserTypeEnum,
-    company: Company,
+    type: UserTypeEnum,
+    companyId: string,
   ): Promise<Tokens> {
     const jwtPayload: JWTPayload = {
       sub: employeeId,
       firstName,
       lastName,
       email,
-      userType,
-      company,
+      type: type,
+      companyId,
     };
 
     const [at, rt] = await Promise.all([

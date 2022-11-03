@@ -34,8 +34,8 @@ export class Employee implements IEmployee {
   @Column({ type: 'enum', enum: GenderEnum })
   gender: GenderEnum;
 
-  @Column({ type: 'date' })
-  dateOfBirth: Date;
+  @Column({ nullable: true })
+  dateOfBirth: string;
 
   @Column({ type: 'enum', enum: UserTypeEnum, default: UserTypeEnum.EMPLOYEE })
   type: UserTypeEnum;
@@ -72,11 +72,11 @@ export class Employee implements IEmployee {
   @Column({ nullable: true, default: 30 })
   leaveBalance?: number;
 
-  @Column({ type: 'date' })
-  dateOfJoining: Date;
+  @Column({ nullable: true })
+  dateOfJoining: string;
 
-  @Column({ type: 'date' })
-  confirmationDate: Date;
+  @Column({ nullable: true })
+  confirmationDate: string;
 
   @Column()
   tinNumber: string;
@@ -91,7 +91,7 @@ export class Employee implements IEmployee {
   updatedAt: Date;
 
   // entity related fields //
-  @OneToOne(() => Company, (company) => company.employees, {
+  @ManyToOne(() => Company, (company) => company.employees, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
@@ -115,7 +115,7 @@ interface IEmployee {
   fatherName: string;
   grandFatherName: string;
   gender: GenderEnum;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   type: UserTypeEnum;
   email: string;
   phone: string;
@@ -125,8 +125,8 @@ interface IEmployee {
   maritalStatus: MaritalStatusEnum;
   totalAllowedLeaves?: number;
   leaveBalance?: number;
-  dateOfJoining: Date;
-  confirmationDate: Date;
+  dateOfJoining: string;
+  confirmationDate: string;
   tinNumber: string;
   accountNumber: string;
   createdAt: Date;

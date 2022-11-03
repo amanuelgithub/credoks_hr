@@ -39,12 +39,12 @@ export class CompaniesService {
   ): Promise<Company> {
     const company = await this.findOne(id);
 
-    const { name, locations, companyLogo, status } = updateCompanyDto;
+    const { name, locations, logo, companyStatus } = updateCompanyDto;
 
     company.name = name;
     company.locations = locations;
-    company.logo = companyLogo;
-    company.companyStatus = status;
+    company.logo = logo;
+    company.companyStatus = companyStatus;
 
     return await this.companiesRepository.save(company);
   }

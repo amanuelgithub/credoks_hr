@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { CompanyStatusEnum } from '../company-status.enum';
 
 export class CreateCompanyDto {
@@ -6,12 +6,17 @@ export class CreateCompanyDto {
   @IsString()
   name: string;
 
+  @IsOptional()
   @IsString()
-  summary: string;
-
-  @IsString()
-  companyLogo: string;
+  logo: string;
 
   @IsEnum(CompanyStatusEnum)
-  status: CompanyStatusEnum;
+  companyStatus: CompanyStatusEnum;
+
+  @IsOptional()
+  @IsString()
+  bussinessType: string;
+
+  @IsString()
+  summary: string;
 }

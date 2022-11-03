@@ -11,8 +11,8 @@ import { Department } from 'src/departments/entities/department.entity';
 import { EmergencyContact } from 'src/employees/entities/emergency-contact.entity';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Leave } from 'src/employees/entities/leave.entity';
-import { Qualification } from 'src/employees/entities/qualification.entity';
 import { UserTypeEnum } from 'src/employees/enums/user-type.enum';
+import { QualificationsService } from 'src/employees/services/qualifications.service';
 import { Location } from 'src/locations/entities/location.entity';
 import { Payroll } from 'src/payroll/entities/payroll.entity';
 import { Position } from 'src/positions/entities/position.entity';
@@ -31,11 +31,11 @@ type Subjects =
       | typeof Department
       | typeof Location
       | typeof Position
-      | typeof Payroll
-      | typeof Leave
       | typeof Employee
+      | typeof Leave
+      | typeof Payroll
+      | typeof QualificationsService
       | typeof EmergencyContact
-      | typeof Qualification
     >
   | 'all';
 
@@ -43,17 +43,36 @@ export type AppAbility = Ability<[Action, Subjects]>;
 
 @Injectable()
 export class CaslAbilityFactory {
-  createForUser(employee: Employee) {
-    const { can, cannot, build } = new AbilityBuilder<
-      Ability<[Action, Subjects]>
-    >(Ability as AbilityClass<AppAbility>);
+  createForUser(user: any) {
+    const { can, cannot, build } = new AbilityBuilder(
+      Ability as AbilityClass<AppAbility>,
+    );
 
-    if (employee.type === UserTypeEnum.ADMIN) {
-      // give full-right over all subjects
+    if (user?.type === UserTypeEnum.ADMIN) {
+      // gives fullright over-all subjects
       can(Action.Manage, 'all');
-    } else if (employee.type === UserTypeEnum.MANAGER) {
-    } else if (employee.type === UserTypeEnum.HR) {
-    } else if (employee.type === UserTypeEnum.EMPLOYEE) {
+    } else if (user?.type === UserTypeEnum.MANAGER) {
+      // can only read,create, and update if only employee's company === managers company
+      can(Action.Create, Employee, { company: { $eq: user.company } });
+      can(Action.Update, Employee, { company: { $eq: user.company } });
+      can(Action.Read, Employee, { company: { $eq: user.company } });
+      cannot(Action.Delete, Employee);
+    } else if (user?.type === UserTypeEnum.HR) {
+      // can only read,create, and update if only employee's company === managers company
+      can(Action.Read, Employee, { company: { $eq: user.company } });
+      can(Action.Create, Employee, { company: { $eq: user.company } });
+      can(Action.Update, Employee, { company: { $eq: user.company } });
+      cannot(Action.Delete, Employee).because(
+        'You are neither hr, manager nor admin...haha :)',
+      );
+    } else if (user?.type === UserTypeEnum.EMPLOYEE) {
+      cannot(Action.Manage, Employee);
+      // Employee can only read and update their own informations
+      can(Action.Read, Employee, { id: { $eq: user.sub } });
+      can(Action.Update, Employee, { id: { $eq: user.sub } });
+      cannot(Action.Delete, Employee).because(
+        'You are neither hr, manager nor admin...haha :)',
+      );
     }
 
     return build({

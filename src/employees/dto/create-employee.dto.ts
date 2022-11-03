@@ -5,6 +5,8 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  IsDate,
+  IsOptional,
 } from 'class-validator';
 import { EmploymentStatusEnum } from '../enums/employment-status.enum';
 import { GenderEnum } from '../enums/gender.enum';
@@ -29,8 +31,8 @@ export class CreateEmployeeDto {
   gender?: GenderEnum;
 
   // @IsNotEmpty()
-  @IsString()
-  dateOfBirth?: Date;
+  @IsOptional()
+  dateOfBirth?: string;
 
   @IsNotEmpty()
   @IsEnum(UserTypeEnum)
@@ -60,12 +62,12 @@ export class CreateEmployeeDto {
   maritalStatus: MaritalStatusEnum;
 
   // @IsNotEmpty()
-  @IsString()
-  dateOfJoining?: Date;
+  @IsOptional()
+  dateOfJoining?: string;
 
   // @IsNotEmpty()
-  @IsString()
-  confirmationDate?: Date;
+  // @IsString()
+  // confirmationDate?: Date;
 
   @IsNotEmpty()
   @IsString()

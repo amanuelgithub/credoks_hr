@@ -16,9 +16,9 @@ export class UpdateCompanyDto {
 
   @IsOptional()
   @IsString()
-  companyLogo: string;
+  logo: string;
 
   @IsOptional()
   @IsEnum(CompanyStatusEnum)
-  status: CompanyStatusEnum;
+  companyStatus: CompanyStatusEnum;
 }
