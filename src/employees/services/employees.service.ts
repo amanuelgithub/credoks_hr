@@ -31,12 +31,10 @@ export class EmployeesService {
   ): Promise<Employee> {
     const { email, password } = createEmployeeDto;
 
-    const oldEmployee = await this.findEmployeeByEmail(email);
-
     const requestingUserAbility =
       this.caslAbilityFactory.createForUser(reqestingUser);
 
-    if (!oldEmployee) {
+    if (!(await this.employeeExistWithSameEmail(email))) {
       // salting and hash password
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(password, salt);
@@ -229,6 +227,14 @@ export class EmployeesService {
       throw new NotFoundException('Employee Not Found!');
     }
     return employee;
+  }
+
+  async employeeExistWithSameEmail(email: string): Promise<boolean> {
+    const employee = await this.employeesRepository.findOne({
+      where: { email },
+    });
+
+    return employee ? true : false;
   }
 
   async update(
