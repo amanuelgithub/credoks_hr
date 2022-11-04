@@ -47,6 +47,7 @@ export class CaslAbilityFactory {
     const { can, cannot, build } = new AbilityBuilder(
       Ability as AbilityClass<AppAbility>,
     );
+    console.log('ability factory', user);
 
     if (user?.type === UserTypeEnum.ADMIN) {
       // gives fullright over-all subjects
@@ -65,6 +66,13 @@ export class CaslAbilityFactory {
       can(Action.Create, Department, { company: { $eq: user.company } });
       can(Action.Update, Department, { company: { $eq: user.company } });
       can(Action.Read, Department, { company: { $eq: user.company } });
+
+      // LOCATIONS
+      // managers can create, read, update and delete locations in his/her company
+      can(Action.Create, Location, { companyId: { $eq: user.companyId } });
+      can(Action.Read, Location, { companyId: { $eq: user.companyId } });
+      can(Action.Update, Location, { companyId: { $eq: user.companyId } });
+      can(Action.Delete, Location, { companyId: { $eq: user.companyId } });
     } else if (user?.type === UserTypeEnum.HR) {
       // EMPLOYEE
       // can only read,create, and update if only employee's company === managers company
@@ -76,6 +84,10 @@ export class CaslAbilityFactory {
       // DEPARTMENT
       // hr can only read departments of their respective company
       can(Action.Read, Department, { company: { $eq: user.company } });
+
+      // LOCATIONS
+      // hr can only read locations of their respective company
+      can(Action.Read, Location, { companyId: { $eq: user.companyId } });
     } else if (user?.type === UserTypeEnum.EMPLOYEE) {
       cannot(Action.Manage, Employee);
       // Employee can only read and update their own informations

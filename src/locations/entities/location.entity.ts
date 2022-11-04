@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -30,8 +31,12 @@ export class Location implements ILocation {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column()
+  companyId: string;
+
   // entity relation fields //
   @ManyToOne(() => Company, (company) => company.locations)
+  @JoinColumn()
   company: Company;
 
   @OneToMany(() => Employee, (employee) => employee.location)
