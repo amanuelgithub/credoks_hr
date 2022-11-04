@@ -24,6 +24,23 @@ export class EmployeesService {
     private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
+  async createAdmin(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
+    const { email, password } = createEmployeeDto;
+
+    if (!(await this.employeeExistWithSameEmail(email))) {
+      const hashedPassword = await this.getHashedPassword(password);
+
+      const employee = this.employeesRepository.create({
+        ...createEmployeeDto,
+        password: hashedPassword,
+      });
+
+      return await this.employeesRepository.save(employee);
+    } else {
+      throw new ConflictException('Email is already in Use.');
+    }
+  }
+
   async createEmployeeInCompany(
     reqestingUser: any,
     companyId: string,
@@ -36,8 +53,7 @@ export class EmployeesService {
 
     if (!(await this.employeeExistWithSameEmail(email))) {
       // salting and hash password
-      const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(password, salt);
+      const hashedPassword = await this.getHashedPassword(password);
 
       // automatically fill company fields. since we know from which company
       // the requested employee creation request comes from.
@@ -280,5 +296,13 @@ export class EmployeesService {
     employee.accountNumber = accountNumber;
 
     return await this.employeesRepository.save(employee);
+  }
+
+  async getHashedPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt();
+
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    return hashedPassword;
   }
 }

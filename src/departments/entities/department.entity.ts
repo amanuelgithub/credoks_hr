@@ -28,6 +28,9 @@ export class Department implements IDepartment {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column()
+  companyId: string;
+
   // entity relation fields //
   @ManyToOne(() => Company, (company) => company.departments)
   company: Company;

@@ -5,7 +5,6 @@ import {
   Matches,
   MaxLength,
   MinLength,
-  IsDate,
   IsOptional,
 } from 'class-validator';
 import { EmploymentStatusEnum } from '../enums/employment-status.enum';
@@ -76,4 +75,8 @@ export class CreateEmployeeDto {
   @IsNotEmpty()
   @IsString()
   accountNumber: string;
+
+  @IsOptional()
+  @IsString()
+  companyId: string;
 }

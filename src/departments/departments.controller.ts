@@ -27,7 +27,7 @@ export class DepartmentsController {
   @CheckPolicies((ability: AppAbility) =>
     ability.can(Action.Create, Department),
   )
-  create(
+  createDepartmentForCompany(
     @Req() req,
     @Body() createDepartmentDto: CreateDepartmentDto,
   ): Promise<Department> {

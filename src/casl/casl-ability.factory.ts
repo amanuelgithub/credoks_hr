@@ -55,17 +55,17 @@ export class CaslAbilityFactory {
     } else if (user?.type === UserTypeEnum.MANAGER) {
       // EMPLOYEE
       // can only read,create, and update if only employee's company === managers company
-      can(Action.Create, Employee, { company: { $eq: user.company } });
-      can(Action.Update, Employee, { company: { $eq: user.company } });
-      can(Action.Read, Employee, { company: { $eq: user.company } });
+      can(Action.Create, Employee, { companyId: { $eq: user.companyId } });
+      can(Action.Update, Employee, { companyId: { $eq: user.companyId } });
+      can(Action.Read, Employee, { companyId: { $eq: user.companyId } });
       cannot(Action.Delete, Employee);
 
       // DEPARTMENT
       // manager  can create, update and read a deparrtment in his/her company
       cannot(Action.Manage, Department);
-      can(Action.Create, Department, { company: { $eq: user.company } });
-      can(Action.Update, Department, { company: { $eq: user.company } });
-      can(Action.Read, Department, { company: { $eq: user.company } });
+      can(Action.Create, Department, { companyId: { $eq: user.companyId } });
+      can(Action.Update, Department, { companyId: { $eq: user.companyId } });
+      can(Action.Read, Department, { companyId: { $eq: user.companyId } });
 
       // LOCATIONS
       // managers can create, read, update and delete locations in his/her company
@@ -76,14 +76,14 @@ export class CaslAbilityFactory {
     } else if (user?.type === UserTypeEnum.HR) {
       // EMPLOYEE
       // can only read,create, and update if only employee's company === managers company
-      can(Action.Read, Employee, { company: { $eq: user.company } });
-      can(Action.Create, Employee, { company: { $eq: user.company } });
-      can(Action.Update, Employee, { company: { $eq: user.company } });
+      can(Action.Read, Employee, { companyId: { $eq: user.companyId } });
+      can(Action.Create, Employee, { companyId: { $eq: user.companyId } });
+      can(Action.Update, Employee, { companyId: { $eq: user.companyId } });
       cannot(Action.Delete, Employee);
 
       // DEPARTMENT
       // hr can only read departments of their respective company
-      can(Action.Read, Department, { company: { $eq: user.company } });
+      can(Action.Read, Department, { companyId: { $eq: user.companyId } });
 
       // LOCATIONS
       // hr can only read locations of their respective company

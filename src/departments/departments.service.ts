@@ -37,6 +37,7 @@ export class DepartmentsService {
     const company = await this.companiesService.findOne(companyId);
 
     const department = this.departmentsRepository.create({
+      companyId,
       name,
       description,
     } as CreateDepartmentDto);

@@ -90,6 +90,9 @@ export class Employee implements IEmployee {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column({ nullable: true })
+  companyId: string;
+
   // entity related fields //
   @ManyToOne(() => Company, (company) => company.employees, {
     onDelete: 'CASCADE',

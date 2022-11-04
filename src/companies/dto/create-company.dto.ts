@@ -10,6 +10,7 @@ export class CreateCompanyDto {
   @IsString()
   logo: string;
 
+  @IsNotEmpty()
   @IsEnum(CompanyStatusEnum)
   companyStatus: CompanyStatusEnum;
 
@@ -17,6 +18,7 @@ export class CreateCompanyDto {
   @IsString()
   bussinessType: string;
 
+  @IsNotEmpty()
   @IsString()
   summary: string;
 }

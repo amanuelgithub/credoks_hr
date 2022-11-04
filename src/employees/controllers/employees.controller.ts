@@ -22,6 +22,12 @@ import { Action, AppAbility } from 'src/casl/casl-ability.factory';
 export class EmployeesController {
   constructor(private readonly employeesService: EmployeesService) {}
 
+  // util function to create a new employee with out requering any king auth
+  @Post()
+  createAdmin(@Body() createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
+    return this.employeesService.createAdmin(createEmployeeDto);
+  }
+
   // create a new employee to specified company
   @Post('/company/:companyId')
   @UseGuards(AtGuard, PoliciesGuard)
