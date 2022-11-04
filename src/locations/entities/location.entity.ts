@@ -39,8 +39,8 @@ export class Location implements ILocation {
   @JoinColumn()
   company: Company;
 
-  @OneToMany(() => Employee, (employee) => employee.location)
-  employees: Employee[];
+  // @OneToMany(() => Employee, (employee) => employee.location)
+  // employees: Employee[];
 }
 
 export interface ILocation {

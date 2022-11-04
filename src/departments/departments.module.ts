@@ -14,5 +14,6 @@ import { CaslModule } from 'src/casl/casl.module';
   ],
   controllers: [DepartmentsController],
   providers: [DepartmentsService],
+  exports: [DepartmentsService],
 })
 export class DepartmentsModule {}

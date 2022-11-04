@@ -108,8 +108,8 @@ export class Employee implements IEmployee {
   @ManyToOne(() => Department, (department) => department.employees)
   department: Department;
 
-  @ManyToOne(() => Location, (location) => location.employees)
-  location: Location;
+  // @ManyToOne(() => Location, (location) => location.employees)
+  // location: Location;
 }
 
 interface IEmployee {

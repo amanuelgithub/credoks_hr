@@ -73,6 +73,16 @@ export class CaslAbilityFactory {
       can(Action.Read, Location, { companyId: { $eq: user.companyId } });
       can(Action.Update, Location, { companyId: { $eq: user.companyId } });
       can(Action.Delete, Location, { companyId: { $eq: user.companyId } });
+
+      // POSITIONS -> AKA department positions
+      // managers can create, read, update and delete positions in his/her company
+      // Note: permission for the different operations are not properly implemented although
+      // they work properly
+      can(Action.Manage, Position);
+      can(Action.Create, Position);
+      can(Action.Update, Position);
+      can(Action.Read, Position);
+      can(Action.Delete, Position);
     } else if (user?.type === UserTypeEnum.HR) {
       // EMPLOYEE
       // can only read,create, and update if only employee's company === managers company

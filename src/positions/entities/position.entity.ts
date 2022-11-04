@@ -19,13 +19,16 @@ export class Position implements IPosition {
   title: string;
 
   @Column()
-  salary: string;
+  salary: number;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column()
+  departmentId: string;
 
   // entity relation fields //
   @OneToMany(() => Employee, (employees) => employees.position, {
@@ -40,7 +43,7 @@ export class Position implements IPosition {
 export interface IPosition {
   id: string;
   title: string;
-  salary: string;
+  salary: number;
   createdAt: Date;
   updatedAt: Date;
 }
