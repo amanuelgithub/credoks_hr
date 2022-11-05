@@ -6,10 +6,17 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { EmergencyContactsService } from '../services/emergency-contacts.service';
 import { CreateEmergencyContactDto } from '../dto/create-emergency-contact.dto';
 import { UpdateEmergencyContactDto } from '../dto/update-emergency-contact.dto';
+import { EmergencyContact } from '../entities/emergency-contact.entity';
+import { AtGuard } from 'src/auth/guards/at.guard';
+import { PoliciesGuard } from 'src/casl/policies.guard';
+import { CheckPolicies } from 'src/casl/check-policy.decorator';
+import { Action, AppAbility } from 'src/casl/casl-ability.factory';
 
 @Controller('emergency-contacts')
 export class EmergencyContactsController {
@@ -17,31 +24,68 @@ export class EmergencyContactsController {
     private readonly emergencyContactsService: EmergencyContactsService,
   ) {}
 
-  @Post()
-  create(@Body() createEmergencyContactDto: CreateEmergencyContactDto) {
-    return this.emergencyContactsService.create(createEmergencyContactDto);
+  @Post(':employeeId')
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Create, EmergencyContact),
+  )
+  createEmergencyContact(
+    @Req() req,
+    @Param('employeeId') employeeId: string,
+    @Body() createEmergencyContactDto: CreateEmergencyContactDto,
+  ): Promise<EmergencyContact> {
+    return this.emergencyContactsService.createEmergencyContactForEmployee(
+      req.user,
+      employeeId,
+      createEmergencyContactDto,
+    );
   }
 
-  @Get()
-  findAll() {
-    return this.emergencyContactsService.findAll();
+  @Get('/employee/:employeeId')
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Manage, EmergencyContact),
+  )
+  findEmergencyContactsOfEmployee(
+    @Param('employeeId') employeeId: string,
+  ): Promise<EmergencyContact[]> {
+    return this.emergencyContactsService.findEmergencyContactsByEmployeeId(
+      employeeId,
+    );
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.emergencyContactsService.findOne(+id);
+  @Get(':ecId')
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Read, EmergencyContact),
+  )
+  async findEmergencyContact(
+    @Param('ecId') ecId: string,
+  ): Promise<EmergencyContact> {
+    return this.emergencyContactsService.findEmergencyContactById(ecId);
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, EmergencyContact),
+  )
+  async update(
+    @Param('ecId') ecId: string,
     @Body() updateEmergencyContactDto: UpdateEmergencyContactDto,
-  ) {
-    return this.emergencyContactsService.update(+id, updateEmergencyContactDto);
+  ): Promise<EmergencyContact> {
+    return this.emergencyContactsService.update(
+      ecId,
+      updateEmergencyContactDto,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.emergencyContactsService.remove(+id);
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Delete, EmergencyContact),
+  )
+  remove(@Param('id') id: string): Promise<void> {
+    return this.emergencyContactsService.remove(id);
   }
 }

@@ -8,6 +8,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -16,6 +17,8 @@ import { EmploymentStatusEnum } from '../enums/employment-status.enum';
 import { GenderEnum } from '../enums/gender.enum';
 import { MaritalStatusEnum } from '../enums/marital-status.enum';
 import { UserTypeEnum } from '../enums/user-type.enum';
+import { EmergencyContact } from './emergency-contact.entity';
+import { Qualification } from './qualification.entity';
 
 @Entity()
 export class Employee implements IEmployee {
@@ -110,6 +113,16 @@ export class Employee implements IEmployee {
 
   // @ManyToOne(() => Location, (location) => location.employees)
   // location: Location;
+
+  @OneToMany(
+    () => EmergencyContact,
+    (emergencyContacts) => emergencyContacts.employee,
+  )
+  @JoinColumn()
+  emergencyContacts: EmergencyContact[];
+
+  @OneToMany(() => Qualification, (qualification) => qualification.employee)
+  qualifications: Qualification[];
 }
 
 interface IEmployee {

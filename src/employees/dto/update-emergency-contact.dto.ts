@@ -1,4 +1,20 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateEmergencyContactDto } from './create-emergency-contact.dto';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { RelationEnum } from '../enums/relation.enum';
 
-export class UpdateEmergencyContactDto extends PartialType(CreateEmergencyContactDto) {}
+export class UpdateEmergencyContactDto {
+  @IsOptional()
+  @IsString()
+  firstName: string;
+
+  @IsOptional()
+  @IsString()
+  lastName: string;
+
+  @IsOptional()
+  @IsString()
+  phone: string;
+
+  @IsOptional()
+  @IsEnum(RelationEnum)
+  relation: RelationEnum;
+}

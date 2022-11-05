@@ -2,10 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { RelationEnum } from '../enums/relation.enum';
+import { Employee } from './employee.entity';
 
 @Entity()
 export class EmergencyContact implements IEmergencyContact {
@@ -18,7 +20,7 @@ export class EmergencyContact implements IEmergencyContact {
   @Column()
   lastName: string;
 
-  @Column()
+  @Column({ unique: true })
   phone: string;
 
   @Column({ type: 'enum', enum: RelationEnum })
@@ -29,6 +31,13 @@ export class EmergencyContact implements IEmergencyContact {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column()
+  employeeId: string;
+
+  // entity related fields //
+  @ManyToOne(() => Employee, (employee) => employee.emergencyContacts)
+  employee: Employee;
 }
 
 interface IEmergencyContact {

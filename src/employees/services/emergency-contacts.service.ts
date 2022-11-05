@@ -1,26 +1,118 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenError } from '@casl/ability';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
+import { Repository } from 'typeorm';
 import { CreateEmergencyContactDto } from '../dto/create-emergency-contact.dto';
 import { UpdateEmergencyContactDto } from '../dto/update-emergency-contact.dto';
+import { EmergencyContact } from '../entities/emergency-contact.entity';
+import { EmployeesService } from './employees.service';
 
 @Injectable()
 export class EmergencyContactsService {
-  create(createEmergencyContactDto: CreateEmergencyContactDto) {
-    return 'This action adds a new emergencyContact';
+  constructor(
+    @InjectRepository(EmergencyContact)
+    private emergencyContactsRepository: Repository<EmergencyContact>,
+    private employeesService: EmployeesService,
+    private caslAbilityFactory: CaslAbilityFactory,
+  ) {}
+
+  async createEmergencyContactForEmployee(
+    requester: any,
+    employeeId: string,
+    createEmergencyContactDto: CreateEmergencyContactDto,
+  ): Promise<EmergencyContact> {
+    const { phone } = createEmergencyContactDto;
+
+    if (await this.emergencyContactExistWithSamePhone(phone)) {
+      throw new ConflictException(
+        'Emergency Contact with same phone already exists!',
+      );
+    }
+
+    const employee = await this.employeesService.findEmployeeById(employeeId);
+
+    const emergencyContact = this.emergencyContactsRepository.create(
+      createEmergencyContactDto,
+    );
+
+    emergencyContact.employee = employee;
+
+    const requesterAbility = this.caslAbilityFactory.createForUser(requester);
+
+    try {
+      ForbiddenError.from(requesterAbility)
+        .setMessage('You are not allowed to perform this action!')
+        .throwUnlessCan(Action.Create, emergencyContact);
+
+      return await this.emergencyContactsRepository.save(emergencyContact);
+    } catch (error) {
+      if (error instanceof ForbiddenError) {
+        throw new ForbiddenException();
+      }
+    }
   }
 
-  findAll() {
-    return `This action returns all emergencyContacts`;
+  async findEmergencyContactsByEmployeeId(
+    employeeId: string,
+  ): Promise<EmergencyContact[]> {
+    const emergencyContacts = await this.emergencyContactsRepository.find({
+      where: { employeeId },
+    });
+
+    if (!emergencyContacts) {
+      throw new NotFoundException('Emergency contacts not found!');
+    }
+
+    return emergencyContacts;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} emergencyContact`;
+  async findEmergencyContactById(ecId: string): Promise<EmergencyContact> {
+    const emergencyContact = await this.emergencyContactsRepository.findOne({
+      where: { id: ecId },
+    });
+
+    if (!emergencyContact) {
+      throw new NotFoundException('Emergency contact not found!');
+    }
+
+    return emergencyContact;
   }
 
-  update(id: number, updateEmergencyContactDto: UpdateEmergencyContactDto) {
-    return `This action updates a #${id} emergencyContact`;
+  async update(
+    ecId: string,
+    updateEmergencyContactDto: UpdateEmergencyContactDto,
+  ) {
+    const emergencyContact = await this.findEmergencyContactById(ecId);
+
+    const { firstName, lastName, phone, relation } = updateEmergencyContactDto;
+
+    emergencyContact.firstName = firstName;
+    emergencyContact.lastName = lastName;
+    emergencyContact.phone = phone;
+    emergencyContact.relation = relation;
+
+    return this.emergencyContactsRepository.save(emergencyContact);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} emergencyContact`;
+  async remove(ecId: string): Promise<void> {
+    const result = await this.emergencyContactsRepository.delete({ id: ecId });
+    if (result.affected === 0) {
+      throw new NotFoundException('Emergency contact Not Found!');
+    }
+  }
+
+  // utile functions //
+  async emergencyContactExistWithSamePhone(phone: string): Promise<boolean> {
+    const emergencyContact = await this.emergencyContactsRepository.findOne({
+      where: { phone },
+    });
+
+    return emergencyContact ? true : false;
   }
 }

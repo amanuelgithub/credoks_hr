@@ -83,6 +83,13 @@ export class CaslAbilityFactory {
       can(Action.Update, Position);
       can(Action.Read, Position);
       can(Action.Delete, Position);
+
+      // EMERGENCY CONTACT INFO
+      // manager can create, read, update and delete emergency contact fora an employee
+      can(Action.Create, EmergencyContact);
+      can(Action.Update, EmergencyContact);
+      can(Action.Read, EmergencyContact);
+      can(Action.Delete, EmergencyContact);
     } else if (user?.type === UserTypeEnum.HR) {
       // EMPLOYEE
       // can only read,create, and update if only employee's company === managers company
@@ -98,6 +105,13 @@ export class CaslAbilityFactory {
       // LOCATIONS
       // hr can only read locations of their respective company
       can(Action.Read, Location, { companyId: { $eq: user.companyId } });
+
+      // EMERGENCY CONTACT INFO
+      // hr can create, read, update and delete emergency contact fora an employee
+      can(Action.Create, EmergencyContact);
+      can(Action.Update, EmergencyContact);
+      can(Action.Read, EmergencyContact);
+      can(Action.Delete, EmergencyContact);
     } else if (user?.type === UserTypeEnum.EMPLOYEE) {
       cannot(Action.Manage, Employee);
       // Employee can only read and update their own informations
@@ -106,6 +120,13 @@ export class CaslAbilityFactory {
       cannot(Action.Delete, Employee).because(
         'You are neither hr, manager nor admin...haha :)',
       );
+
+      // EMERGENCY CONTACT INFO
+      // employees can create, read, update and delete their own emergency contact details
+      can(Action.Create, EmergencyContact, { employeeId: { $eq: user.sub } });
+      can(Action.Update, EmergencyContact, { employeeId: { $eq: user.sub } });
+      can(Action.Read, EmergencyContact, { employeeId: { $eq: user.sub } });
+      can(Action.Delete, EmergencyContact, { employeeId: { $eq: user.sub } });
     }
 
     return build({

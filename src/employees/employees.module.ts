@@ -11,10 +11,11 @@ import { LeaveService } from './services/leave.service';
 import { EmergencyContactsService } from './services/emergency-contacts.service';
 import { CaslModule } from 'src/casl/casl.module';
 import { CompaniesModule } from 'src/companies/companies.module';
+import { EmergencyContact } from './entities/emergency-contact.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Employee]),
+    TypeOrmModule.forFeature([Employee, EmergencyContact]),
     Employee,
     CaslModule,
     CompaniesModule,
