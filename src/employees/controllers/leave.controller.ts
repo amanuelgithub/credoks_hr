@@ -15,6 +15,7 @@ import { PoliciesGuard } from 'src/casl/policies.guard';
 import { CheckPolicies } from 'src/casl/check-policy.decorator';
 import { Action, AppAbility } from 'src/casl/casl-ability.factory';
 import { CancelLeaveRequestDto } from '../dto/cancel-leave-request.dto';
+import { AcceptOrRejectDto } from '../dto/accept-reject-leave-request.dto';
 
 // list of endpoints to be created
 
@@ -40,7 +41,7 @@ export class LeaveController {
   }
 
   // cancel leave status request
-  @Patch(':id')
+  @Patch('/cancel/:id')
   @UseGuards(AtGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Leave))
   cancelRequest(
@@ -52,6 +53,22 @@ export class LeaveController {
       req.user,
       id,
       cancelLeaveRequestDto,
+    );
+  }
+
+  // accept or reject a leave request
+  @Patch('/accept-reject/:id')
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Leave))
+  accepteOrRejectRequest(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() accepteOrRejectRequestDto: AcceptOrRejectDto,
+  ): Promise<Leave> {
+    return this.leavesService.acceptOrRejectRequest(
+      req.user,
+      id,
+      accepteOrRejectRequestDto,
     );
   }
 }

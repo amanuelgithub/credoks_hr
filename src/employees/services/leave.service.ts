@@ -9,6 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
 import { Repository } from 'typeorm';
+import { AcceptOrRejectDto } from '../dto/accept-reject-leave-request.dto';
 import { CancelLeaveRequestDto } from '../dto/cancel-leave-request.dto';
 import { CreateLeaveDto } from '../dto/create-leave.dto';
 import { Leave } from '../entities/leave.entity';
@@ -70,6 +71,31 @@ export class LeaveService {
         .throwUnlessCan(Action.Update, leave);
 
       leave.leaveStatus = cancelLeaveRequestDto.leaveStatus;
+
+      return await this.leavesRepository.save(leave);
+    } catch (error) {
+      if (error instanceof ForbiddenError) {
+        throw new ForbiddenException(error.message);
+      }
+    }
+  }
+
+  async acceptOrRejectRequest(
+    requester: any,
+    id: string,
+    accepteOrRejectRequestDto: AcceptOrRejectDto,
+  ): Promise<Leave> {
+    const leave = await this.findLeave(id);
+
+    const requesterAbility = this.caslAbilityFactory.createForUser(requester);
+    try {
+      ForbiddenError.from(requesterAbility)
+        .setMessage(
+          'You are not allowed to Accept or Decline this leave request',
+        )
+        .throwUnlessCan(Action.Update, leave);
+
+      leave.leaveStatus = accepteOrRejectRequestDto.leaveStatus;
 
       return await this.leavesRepository.save(leave);
     } catch (error) {
