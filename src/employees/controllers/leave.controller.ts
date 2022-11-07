@@ -1,21 +1,20 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { LeaveService } from '../services/leave.service';
 import { CreateLeaveDto } from '../dto/create-leave.dto';
-import { UpdateLeaveDto } from '../dto/update-leave.dto';
 import { Leave } from '../entities/leave.entity';
 import { AtGuard } from 'src/auth/guards/at.guard';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { CheckPolicies } from 'src/casl/check-policy.decorator';
 import { Action, AppAbility } from 'src/casl/casl-ability.factory';
+import { CancelLeaveRequestDto } from '../dto/cancel-leave-request.dto';
 
 // list of endpoints to be created
 
@@ -31,12 +30,28 @@ import { Action, AppAbility } from 'src/casl/casl-ability.factory';
 
 @Controller('leaves')
 export class LeaveController {
-  constructor(private readonly leaveService: LeaveService) {}
+  constructor(private readonly leavesService: LeaveService) {}
 
   @Post()
   @UseGuards(AtGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Leave))
   create(@Body() createLeaveDto: CreateLeaveDto): Promise<Leave> {
-    return this.leaveService.create(createLeaveDto);
+    return this.leavesService.create(createLeaveDto);
+  }
+
+  // cancel leave status request
+  @Patch(':id')
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Leave))
+  cancelRequest(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() cancelLeaveRequestDto: CancelLeaveRequestDto,
+  ): Promise<Leave> {
+    return this.leavesService.cancelLeaveRequest(
+      req.user,
+      id,
+      cancelLeaveRequestDto,
+    );
   }
 }

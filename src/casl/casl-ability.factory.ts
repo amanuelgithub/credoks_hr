@@ -92,7 +92,8 @@ export class CaslAbilityFactory {
       can(Action.Delete, EmergencyContact);
 
       // LEAVES
-      can(Action.Create, Leave);
+      can(Action.Create, Leave, { employeeId: { $eq: user.sub } });
+      can(Action.Update, Leave, { employeeId: { $eq: user.sub } }); // for cancle request
     } else if (user?.type === UserTypeEnum.HR) {
       // EMPLOYEE
       // can only read,create, and update if only employee's company === managers company
@@ -124,7 +125,8 @@ export class CaslAbilityFactory {
       can(Action.Delete, Qualification);
 
       // LEAVES
-      can(Action.Create, Leave);
+      can(Action.Create, Leave, { employeeId: { $eq: user.sub } });
+      can(Action.Update, Leave, { employeeId: { $eq: user.sub } }); // for cancle request
     } else if (user?.type === UserTypeEnum.EMPLOYEE) {
       cannot(Action.Manage, Employee);
       // Employee can only read and update their own informations
@@ -149,7 +151,8 @@ export class CaslAbilityFactory {
       can(Action.Delete, Qualification, { employeeId: { $eq: user.sub } });
 
       // LEAVES
-      can(Action.Create, Leave);
+      can(Action.Create, Leave, { employeeId: { $eq: user.sub } });
+      can(Action.Update, Leave, { employeeId: { $eq: user.sub } }); // for cancle request
     }
 
     return build({

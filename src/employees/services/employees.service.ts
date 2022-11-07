@@ -314,35 +314,39 @@ export class EmployeesService {
     totalMarriageLeaveBalance: number;
     totalPaternityLeaveBalance: number;
   }> {
-    const employeeLeaveBalances = await this.employeesRepository
-      .createQueryBuilder('user')
-      .select([
-        'user.totalLeaveBalance',
-        'user.totalSickLeaveBalance',
-        'user.totalAnnualLeaveBalance',
-        'user.totalMaternityLeaveBalance',
-        'user.totalMarriageLeaveBalance',
-        'user.totalPaternityLeaveBalance',
-      ])
-      .where('user.id = :employeeId', { employeeId })
-      .getRawOne();
+    try {
+      const employeeLeaveBalances = await this.employeesRepository
+        .createQueryBuilder('user')
+        .select([
+          'user.totalLeaveBalance',
+          'user.totalSickLeaveBalance',
+          'user.totalAnnualLeaveBalance',
+          'user.totalMaternityLeaveBalance',
+          'user.totalMarriageLeaveBalance',
+          'user.totalPaternityLeaveBalance',
+        ])
+        .where('user.id = :employeeId', { employeeId })
+        .getRawOne();
 
-    return {
-      totalLeaveBalance: employeeLeaveBalances.user_totalLeaveBalance,
+      return {
+        totalLeaveBalance: employeeLeaveBalances.user_totalLeaveBalance,
 
-      totalSickLeaveBalance: employeeLeaveBalances.user_totalSickLeaveBalance,
+        totalSickLeaveBalance: employeeLeaveBalances.user_totalSickLeaveBalance,
 
-      totalAnnualLeaveBalance:
-        employeeLeaveBalances.user_totalAnnualLeaveBalance,
+        totalAnnualLeaveBalance:
+          employeeLeaveBalances.user_totalAnnualLeaveBalance,
 
-      totalMaternityLeaveBalance:
-        employeeLeaveBalances.user_totalMaternityLeaveBalance,
+        totalMaternityLeaveBalance:
+          employeeLeaveBalances.user_totalMaternityLeaveBalance,
 
-      totalMarriageLeaveBalance:
-        employeeLeaveBalances.user_totalMarriageLeaveBalance,
+        totalMarriageLeaveBalance:
+          employeeLeaveBalances.user_totalMarriageLeaveBalance,
 
-      totalPaternityLeaveBalance:
-        employeeLeaveBalances.user_totalPaternityLeaveBalance,
-    };
+        totalPaternityLeaveBalance:
+          employeeLeaveBalances.user_totalPaternityLeaveBalance,
+      };
+    } catch (error) {
+      throw new NotFoundException('Employee Not Found!');
+    }
   }
 }
