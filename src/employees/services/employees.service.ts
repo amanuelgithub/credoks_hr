@@ -305,4 +305,44 @@ export class EmployeesService {
 
     return hashedPassword;
   }
+
+  async getLeaveBalances(employeeId: string): Promise<{
+    totalLeaveBalance: number;
+    totalSickLeaveBalance: number;
+    totalAnnualLeaveBalance: number;
+    totalMaternityLeaveBalance: number;
+    totalMarriageLeaveBalance: number;
+    totalPaternityLeaveBalance: number;
+  }> {
+    const employeeLeaveBalances = await this.employeesRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.totalLeaveBalance',
+        'user.totalSickLeaveBalance',
+        'user.totalAnnualLeaveBalance',
+        'user.totalMaternityLeaveBalance',
+        'user.totalMarriageLeaveBalance',
+        'user.totalPaternityLeaveBalance',
+      ])
+      .where('user.id = :employeeId', { employeeId })
+      .getRawOne();
+
+    return {
+      totalLeaveBalance: employeeLeaveBalances.user_totalLeaveBalance,
+
+      totalSickLeaveBalance: employeeLeaveBalances.user_totalSickLeaveBalance,
+
+      totalAnnualLeaveBalance:
+        employeeLeaveBalances.user_totalAnnualLeaveBalance,
+
+      totalMaternityLeaveBalance:
+        employeeLeaveBalances.user_totalMaternityLeaveBalance,
+
+      totalMarriageLeaveBalance:
+        employeeLeaveBalances.user_totalMarriageLeaveBalance,
+
+      totalPaternityLeaveBalance:
+        employeeLeaveBalances.user_totalPaternityLeaveBalance,
+    };
+  }
 }

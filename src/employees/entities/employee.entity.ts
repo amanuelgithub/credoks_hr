@@ -1,6 +1,9 @@
+import {
+  LEAVE_POLICY,
+  TOTAL_ALLOWED_LEAVES,
+} from 'src/employees/leave-policies';
 import { Company } from 'src/companies/entities/company.entity';
 import { Department } from 'src/departments/entities/department.entity';
-import { Location } from 'src/locations/entities/location.entity';
 import { Position } from 'src/positions/entities/position.entity';
 import {
   Column,
@@ -9,7 +12,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -18,6 +20,7 @@ import { GenderEnum } from '../enums/gender.enum';
 import { MaritalStatusEnum } from '../enums/marital-status.enum';
 import { UserTypeEnum } from '../enums/user-type.enum';
 import { EmergencyContact } from './emergency-contact.entity';
+import { Leave } from './leave.entity';
 import { Qualification } from './qualification.entity';
 
 @Entity()
@@ -69,12 +72,6 @@ export class Employee implements IEmployee {
   })
   maritalStatus: MaritalStatusEnum;
 
-  @Column({ nullable: true, default: 30 })
-  totalAllowedLeaves?: number;
-
-  @Column({ nullable: true, default: 30 })
-  leaveBalance?: number;
-
   @Column({ nullable: true })
   dateOfJoining: string;
 
@@ -86,6 +83,33 @@ export class Employee implements IEmployee {
 
   @Column()
   accountNumber: string;
+
+  @Column({
+    nullable: true,
+    default: TOTAL_ALLOWED_LEAVES,
+  })
+  totalAllowedLeaves: number;
+
+  @Column({
+    nullable: true,
+    default: TOTAL_ALLOWED_LEAVES,
+  })
+  totalLeaveBalance: number;
+
+  @Column({ nullable: true, default: LEAVE_POLICY.totalAllowedSickLeaves })
+  totalSickLeaveBalance: number;
+
+  @Column({ nullable: true, default: LEAVE_POLICY.totalAllowedAnnualLeaves })
+  totalAnnualLeaveBalance: number;
+
+  @Column({ nullable: true, default: LEAVE_POLICY.totalAllowedMaternityLeaves })
+  totalMaternityLeaveBalance: number;
+
+  @Column({ nullable: true, default: LEAVE_POLICY.totalAllowedMarriageLeaves })
+  totalMarriageLeaveBalance: number;
+
+  @Column({ nullable: true, default: LEAVE_POLICY.totalAllowedPaternityLeaves })
+  totalPaternityLeaveBalance: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -122,7 +146,12 @@ export class Employee implements IEmployee {
   emergencyContacts: EmergencyContact[];
 
   @OneToMany(() => Qualification, (qualification) => qualification.employee)
+  @JoinColumn()
   qualifications: Qualification[];
+
+  @OneToMany(() => Leave, (leave) => leave.employee)
+  @JoinColumn()
+  leaves: Leave[];
 }
 
 interface IEmployee {
@@ -139,12 +168,24 @@ interface IEmployee {
   hashedRt?: string;
   employmentStatus: EmploymentStatusEnum;
   maritalStatus: MaritalStatusEnum;
-  totalAllowedLeaves?: number;
-  leaveBalance?: number;
   dateOfJoining: string;
   confirmationDate: string;
   tinNumber: string;
   accountNumber: string;
+  // total leaves
+  totalAllowedLeaves: number;
+  totalLeaveBalance: number;
+  // sick
+  totalSickLeaveBalance: number;
+  // annual
+  totalAnnualLeaveBalance: number;
+  // maternity
+  totalMaternityLeaveBalance: number;
+  // marriage
+  totalMarriageLeaveBalance: number;
+  // paternity
+  totalPaternityLeaveBalance: number;
+
   createdAt: Date;
   updatedAt: Date;
 }

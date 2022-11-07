@@ -13,10 +13,16 @@ import { CaslModule } from 'src/casl/casl.module';
 import { CompaniesModule } from 'src/companies/companies.module';
 import { EmergencyContact } from './entities/emergency-contact.entity';
 import { Qualification } from './entities/qualification.entity';
+import { Leave } from './entities/leave.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Employee, EmergencyContact, Qualification]),
+    TypeOrmModule.forFeature([
+      Employee,
+      EmergencyContact,
+      Qualification,
+      Leave,
+    ]),
     Employee,
     CaslModule,
     CompaniesModule,

@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateLeaveDto } from '../dto/create-leave.dto';
-import { UpdateLeaveDto } from '../dto/update-leave.dto';
+import { Leave } from '../entities/leave.entity';
+import { LeaveTypeEnum } from '../enums/leave-type.enum';
+import { EmployeesService } from './employees.service';
 
 @Injectable()
 export class LeaveService {
-  create(createLeaveDto: CreateLeaveDto) {
-    return 'This action adds a new leave';
-  }
+  constructor(
+    @InjectRepository(Leave)
+    private leavesRepository: Repository<Leave>,
+    private employeesService: EmployeesService,
+  ) {}
 
-  findAll() {
-    return `This action returns all leave`;
-  }
+  async create(createLeaveDto: CreateLeaveDto): Promise<Leave> {
+    const employeeLeaveBalances = await this.employeesService.getLeaveBalances(
+      createLeaveDto.employeeId,
+    );
 
-  findOne(id: number) {
-    return `This action returns a #${id} leave`;
-  }
+    const { leaveType, requestedDays } = createLeaveDto;
 
-  update(id: number, updateLeaveDto: UpdateLeaveDto) {
-    return `This action updates a #${id} leave`;
-  }
+    if (
+      requestedDays >= 1 &&
+      ((leaveType === LeaveTypeEnum.SICK_LEAVE &&
+        requestedDays <= employeeLeaveBalances.totalSickLeaveBalance) ||
+        (leaveType === LeaveTypeEnum.ANNUAL_LEAVE &&
+          requestedDays <= employeeLeaveBalances.totalAnnualLeaveBalance) ||
+        (leaveType === LeaveTypeEnum.MARRIAGE_LEAVE &&
+          requestedDays <= employeeLeaveBalances.totalMarriageLeaveBalance) ||
+        (leaveType === LeaveTypeEnum.MATERNITY_LEAVE &&
+          requestedDays <= employeeLeaveBalances.totalMaternityLeaveBalance) ||
+        (leaveType == LeaveTypeEnum.PATERNITY_LEAVE &&
+          requestedDays <= employeeLeaveBalances.totalPaternityLeaveBalance))
+    ) {
+      // continue processing the leave request
+      const leave = this.leavesRepository.create(createLeaveDto);
 
-  remove(id: number) {
-    return `This action removes a #${id} leave`;
+      return await this.leavesRepository.save(leave);
+    } else {
+      throw new HttpException(
+        'Requested Leave Days exceeds the allwed days for the leave type. Please try with other leave types.',
+        HttpStatus.EXPECTATION_FAILED,
+      );
+    }
   }
 }
