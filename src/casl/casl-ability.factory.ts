@@ -11,8 +11,8 @@ import { Department } from 'src/departments/entities/department.entity';
 import { EmergencyContact } from 'src/employees/entities/emergency-contact.entity';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Leave } from 'src/employees/entities/leave.entity';
+import { Qualification } from 'src/employees/entities/qualification.entity';
 import { UserTypeEnum } from 'src/employees/enums/user-type.enum';
-import { QualificationsService } from 'src/employees/services/qualifications.service';
 import { Location } from 'src/locations/entities/location.entity';
 import { Payroll } from 'src/payroll/entities/payroll.entity';
 import { Position } from 'src/positions/entities/position.entity';
@@ -34,7 +34,7 @@ type Subjects =
       | typeof Employee
       | typeof Leave
       | typeof Payroll
-      | typeof QualificationsService
+      | typeof Qualification
       | typeof EmergencyContact
     >
   | 'all';
@@ -112,6 +112,13 @@ export class CaslAbilityFactory {
       can(Action.Update, EmergencyContact);
       can(Action.Read, EmergencyContact);
       can(Action.Delete, EmergencyContact);
+
+      // QUALIFICATIONS
+      can(Action.Manage, Qualification);
+      can(Action.Create, Qualification);
+      can(Action.Update, Qualification);
+      can(Action.Read, Qualification);
+      can(Action.Delete, Qualification);
     } else if (user?.type === UserTypeEnum.EMPLOYEE) {
       cannot(Action.Manage, Employee);
       // Employee can only read and update their own informations
@@ -127,6 +134,13 @@ export class CaslAbilityFactory {
       can(Action.Update, EmergencyContact, { employeeId: { $eq: user.sub } });
       can(Action.Read, EmergencyContact, { employeeId: { $eq: user.sub } });
       can(Action.Delete, EmergencyContact, { employeeId: { $eq: user.sub } });
+
+      // QUALIFICATION INFORMATION
+      // employees can create, read, update and delete their own qualificaitons
+      can(Action.Create, Qualification, { employeeId: { $eq: user.sub } });
+      can(Action.Update, Qualification, { employeeId: { $eq: user.sub } });
+      can(Action.Read, Qualification, { employeeId: { $eq: user.sub } });
+      can(Action.Delete, Qualification, { employeeId: { $eq: user.sub } });
     }
 
     return build({

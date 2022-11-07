@@ -1,4 +1,15 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateQualificationDto } from './create-qualification.dto';
+import { IsOptional, IsString } from 'class-validator';
 
-export class UpdateQualificationDto extends PartialType(CreateQualificationDto) {}
+export class UpdateQualificationDto {
+  @IsOptional()
+  @IsString()
+  education: string;
+
+  @IsOptional()
+  @IsString()
+  educationStartedYear: string;
+
+  @IsOptional()
+  @IsString()
+  educationEndedYear: string;
+}
