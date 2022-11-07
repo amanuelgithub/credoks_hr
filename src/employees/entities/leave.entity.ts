@@ -18,7 +18,7 @@ export class Leave implements ILeave {
   @Column({ type: 'enum', enum: LeaveTypeEnum })
   leaveType: LeaveTypeEnum;
 
-  @Column({})
+  @Column()
   requestedDays: number;
 
   @Column({ nullable: true })
