@@ -14,6 +14,18 @@ import { CompaniesService } from 'src/companies/companies.service';
 import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
 import { UserTypeEnum } from '../enums/user-type.enum';
 import { ForbiddenError } from '@casl/ability';
+import { EmploymentStatusEnum } from '../enums/employment-status.enum';
+
+export interface ICompanyEmployeeReport {
+  companyName: string;
+  totalEmployees: number;
+  employmentStatus: {
+    confirmed: number;
+    contract: number;
+    probation: number;
+    trainee: number;
+  };
+}
 
 @Injectable()
 export class EmployeesService {
@@ -83,6 +95,8 @@ export class EmployeesService {
   }
 
   async findEmployeesInCompanies(): Promise<Employee[]> {
+    await this.companiesEmployeesReport();
+
     const employees = await this.employeesRepository.find();
 
     if (!employees) {
@@ -348,5 +362,69 @@ export class EmployeesService {
     } catch (error) {
       throw new NotFoundException('Employee Not Found!');
     }
+  }
+
+  // reporting related
+  async companiesEmployeesReport(): Promise<ICompanyEmployeeReport[]> {
+    const reportContainerArray: ICompanyEmployeeReport[] = [];
+
+    const companies = await this.companyService.findAll();
+
+    const confirmedEmp = EmploymentStatusEnum.CONFIRMED;
+    const contractEmp = EmploymentStatusEnum.CONTRACT;
+    const probationEmp = EmploymentStatusEnum.PROBAATION;
+    const traineeEmp = EmploymentStatusEnum.TRAINEE;
+
+    for (const company of companies) {
+      const companyId = company.id;
+
+      const totalCompanyEmp = await this.employeesRepository
+        .createQueryBuilder('employees')
+        .where('employees.company = :companyId', { companyId })
+        .getCount();
+
+      const totalConfirmedEmp = await this.employeesRepository
+        .createQueryBuilder('employees')
+        .where('employees.company = :companyId', { companyId })
+        .andWhere('employees.employmentStatus = :confirmedEmp', {
+          confirmedEmp,
+        })
+        .getCount();
+
+      const totalContractEmp = await this.employeesRepository
+        .createQueryBuilder('employees')
+        .where('employees.company = :companyId', { companyId })
+        .andWhere('employees.employmentStatus = :contractEmp', { contractEmp })
+        .getCount();
+
+      const totalProbationEmp = await this.employeesRepository
+        .createQueryBuilder('employees')
+        .where('employees.company = :companyId', { companyId })
+        .andWhere('employees.employmentStatus = :probationEmp', {
+          probationEmp,
+        })
+        .getCount();
+
+      const totalTraineeEmp = await this.employeesRepository
+        .createQueryBuilder('employees')
+        .where('employees.company = :companyId', { companyId })
+        .andWhere('employees.employmentStatus = :traineeEmp', { traineeEmp })
+        .getCount();
+
+      const companyEmloyeeReport: ICompanyEmployeeReport = {
+        companyName: company.name,
+        totalEmployees: totalCompanyEmp,
+        employmentStatus: {
+          confirmed: totalConfirmedEmp,
+          contract: totalContractEmp,
+          probation: totalProbationEmp,
+          trainee: totalTraineeEmp,
+        },
+      };
+
+      reportContainerArray.push(companyEmloyeeReport);
+    }
+
+    return reportContainerArray;
   }
 }

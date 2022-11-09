@@ -9,7 +9,10 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { EmployeesService } from '../services/employees.service';
+import {
+  EmployeesService,
+  ICompanyEmployeeReport,
+} from '../services/employees.service';
 import { CreateEmployeeDto } from '../dto/create-employee.dto';
 import { UpdateEmployeeDto } from '../dto/update-employee.dto';
 import { Employee } from '../entities/employee.entity';
@@ -68,7 +71,7 @@ export class EmployeesController {
     return employees;
   }
 
-  @Get(':id')
+  @Get('/:id')
   @UseGuards(AtGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Employee))
   async findOneEmployee(
@@ -78,7 +81,7 @@ export class EmployeesController {
     return this.employeesService.findOneEmployee(req.user, id);
   }
 
-  @Patch(':id')
+  @Patch('/:id')
   @UseGuards(AtGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Employee))
   updateEmployee(
@@ -93,10 +96,17 @@ export class EmployeesController {
     );
   }
 
-  @Delete(':id')
+  @Delete('/:id')
   @UseGuards(AtGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, Employee))
   remove(@Param('id') id: string) {
     return this.employeesService.remove(id);
+  }
+
+  // reporting
+  @Get('/report/company-employees-report')
+  @UseGuards(AtGuard)
+  companiesEmployeesReport(): Promise<ICompanyEmployeeReport[]> {
+    return this.employeesService.companiesEmployeesReport();
   }
 }
