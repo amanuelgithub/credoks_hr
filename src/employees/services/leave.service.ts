@@ -25,6 +25,52 @@ export class LeaveService {
     private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
+  async findLeavesInCompany(
+    requester: any,
+    companyId: string,
+  ): Promise<Leave[]> {
+    const leaves = await this.leavesRepository.find({
+      relations: {
+        employee: true,
+      },
+    });
+
+    const filteredLeaves = [];
+    for (let i = 0; i < leaves.length; i++) {
+      const leave = leaves[i];
+      if (companyId && leave.employee.companyId === companyId) {
+        filteredLeaves.push(leave);
+      }
+    }
+
+    return filteredLeaves;
+  }
+
+  async findLeaveByEmployeeId(
+    requester: any,
+    employeeId: string,
+  ): Promise<Leave[]> {
+    const leaves = await this.leavesRepository.find({ where: { employeeId } });
+
+    const requesterAbility = this.caslAbilityFactory.createForUser(requester);
+
+    // try {
+    //   ForbiddenError.from(requesterAbility)
+    //     .setMessage('You are not allowed to see this leaves')
+    //     .throwUnlessCan(Action.Update, leave);
+
+    //   leave.leaveStatus = accepteOrRejectRequestDto.leaveStatus;
+
+    //   return await this.leavesRepository.save(leave);
+    // } catch (error) {
+    //   if (error instanceof ForbiddenError) {
+    //     throw new ForbiddenException(error.message);
+    //   }
+    // }
+
+    return leaves;
+  }
+
   async create(createLeaveDto: CreateLeaveDto): Promise<Leave> {
     const employeeLeaveBalances = await this.employeesService.getLeaveBalances(
       createLeaveDto.employeeId,
@@ -45,8 +91,13 @@ export class LeaveService {
         (leaveType == LeaveTypeEnum.PATERNITY_LEAVE &&
           requestedDays <= employeeLeaveBalances.totalPaternityLeaveBalance))
     ) {
+      const employee = await this.employeesService.findEmployeeById(
+        createLeaveDto.employeeId,
+      );
+
       // continue processing the leave request
       const leave = this.leavesRepository.create(createLeaveDto);
+      leave.employee = employee;
 
       return await this.leavesRepository.save(leave);
     } else {

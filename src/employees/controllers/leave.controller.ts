@@ -6,6 +6,7 @@ import {
   Param,
   UseGuards,
   Req,
+  Get,
 } from '@nestjs/common';
 import { LeaveService } from '../services/leave.service';
 import { CreateLeaveDto } from '../dto/create-leave.dto';
@@ -32,6 +33,26 @@ import { AcceptOrRejectDto } from '../dto/accept-reject-leave-request.dto';
 @Controller('leaves')
 export class LeaveController {
   constructor(private readonly leavesService: LeaveService) {}
+
+  @Get('/:companyId')
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Leave))
+  findLeavesInCompany(
+    @Req() req,
+    @Param('companyId') companyId: string,
+  ): Promise<Leave[]> {
+    return this.leavesService.findLeavesInCompany(req.user, companyId);
+  }
+
+  @Get('/:employeeId')
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Leave))
+  findLeavesByEmployeeId(
+    @Req() req,
+    @Param('employeeId') companyId: string,
+  ): Promise<Leave[]> {
+    return this.leavesService.findLeaveByEmployeeId(req.user, companyId);
+  }
 
   @Post()
   @UseGuards(AtGuard, PoliciesGuard)

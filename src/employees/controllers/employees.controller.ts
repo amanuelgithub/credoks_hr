@@ -20,6 +20,7 @@ import { AtGuard } from 'src/auth/guards/at.guard';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { CheckPolicies } from 'src/casl/check-policy.decorator';
 import { Action, AppAbility } from 'src/casl/casl-ability.factory';
+import { ChangePasswordDto } from '../dto/change-password.dto';
 
 @Controller('employees')
 export class EmployeesController {
@@ -108,5 +109,14 @@ export class EmployeesController {
   @UseGuards(AtGuard)
   companiesEmployeesReport(): Promise<ICompanyEmployeeReport[]> {
     return this.employeesService.companiesEmployeesReport();
+  }
+
+  @Patch('/:id/change-password/')
+  @UseGuards(AtGuard)
+  changePassword(
+    @Param('id') id: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    return this.employeesService.changePassword(id, changePasswordDto);
   }
 }

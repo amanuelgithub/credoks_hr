@@ -47,7 +47,7 @@ export class CaslAbilityFactory {
     const { can, cannot, build } = new AbilityBuilder(
       Ability as AbilityClass<AppAbility>,
     );
-    console.log('ability factory', user);
+    // console.log('ability factory', user);
 
     if (user?.type === UserTypeEnum.ADMIN) {
       // gives fullright over-all subjects
@@ -92,6 +92,7 @@ export class CaslAbilityFactory {
       can(Action.Delete, EmergencyContact);
 
       // LEAVES
+      can(Action.Read, Leave);
       can(Action.Create, Leave, { employeeId: { $eq: user.sub } });
       can(Action.Update, Leave, { employeeId: { $eq: user.sub } }); // for cancle request
       can(Action.Manage, Leave); // for accepting or decldining request
@@ -126,6 +127,7 @@ export class CaslAbilityFactory {
       can(Action.Delete, Qualification);
 
       // LEAVES
+      can(Action.Read, Leave);
       can(Action.Create, Leave, { employeeId: { $eq: user.sub } });
       can(Action.Update, Leave, { employeeId: { $eq: user.sub } }); // for cancle request
       can(Action.Manage, Leave); // for accepting or decldining request

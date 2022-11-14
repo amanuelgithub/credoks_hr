@@ -1,11 +1,4 @@
-import {
-  IsEnum,
-  IsOptional,
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { EmploymentStatusEnum } from '../enums/employment-status.enum';
 import { GenderEnum } from '../enums/gender.enum';
 import { MaritalStatusEnum } from '../enums/marital-status.enum';
@@ -43,15 +36,6 @@ export class UpdateEmployeeDto {
   @IsOptional()
   @IsString()
   phone?: string;
-
-  @IsOptional()
-  @IsString()
-  @MinLength(6)
-  @MaxLength(32)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'Password is too weak!',
-  })
-  password?: string;
 
   @IsOptional()
   @IsString()

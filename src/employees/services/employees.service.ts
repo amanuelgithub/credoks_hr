@@ -15,6 +15,7 @@ import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
 import { UserTypeEnum } from '../enums/user-type.enum';
 import { ForbiddenError } from '@casl/ability';
 import { EmploymentStatusEnum } from '../enums/employment-status.enum';
+import { ChangePasswordDto } from '../dto/change-password.dto';
 
 export interface ICompanyEmployeeReport {
   companyName: string;
@@ -129,9 +130,10 @@ export class EmployeesService {
       (requestingEmployee.type === UserTypeEnum.HR &&
         requestingEmployee.company.id === selectedCompany.id)
     ) {
+      console.log('companyid: ', companyId);
       // filter list of employees by the company of the manager or hr
       filteredEmployees = await this.employeesRepository.find({
-        where: { company: requestingEmployee.company },
+        where: { companyId: selectedCompany.id },
       });
     } else {
       // employee with `EMPLOYEE` type cannot access list of employees
@@ -188,7 +190,6 @@ export class EmployeesService {
         type,
         email,
         phone,
-        password,
         hashedRt,
         employmentStatus,
         maritalStatus,
@@ -206,7 +207,6 @@ export class EmployeesService {
       employee.type = type;
       employee.email = email;
       employee.phone = phone;
-      employee.password = password;
       employee.hashedRt = hashedRt;
       employee.employmentStatus = employmentStatus;
       employee.maritalStatus = maritalStatus;
@@ -228,6 +228,18 @@ export class EmployeesService {
     if (result.affected === 0) {
       throw new NotFoundException('Employee Not Found!');
     }
+  }
+
+  async changePassword(id: string, changePasswordDto: ChangePasswordDto) {
+    const employee = await this.findEmployeeById(id);
+
+    const hashedPassword = await this.getHashedPassword(
+      changePasswordDto.password,
+    );
+
+    employee.password = hashedPassword;
+
+    return await this.employeesRepository.save(employee);
   }
 
   //=================================================================================//
@@ -282,7 +294,6 @@ export class EmployeesService {
       type,
       email,
       phone,
-      password,
       hashedRt,
       employmentStatus,
       maritalStatus,
@@ -300,7 +311,6 @@ export class EmployeesService {
     employee.type = type;
     employee.email = email;
     employee.phone = phone;
-    employee.password = password;
     employee.hashedRt = hashedRt;
     employee.employmentStatus = employmentStatus;
     employee.maritalStatus = maritalStatus;
