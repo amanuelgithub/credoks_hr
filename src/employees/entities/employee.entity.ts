@@ -20,7 +20,6 @@ import { GenderEnum } from '../enums/gender.enum';
 import { MaritalStatusEnum } from '../enums/marital-status.enum';
 import { UserTypeEnum } from '../enums/user-type.enum';
 import { EmergencyContact } from './emergency-contact.entity';
-import { Leave } from './leave.entity';
 import { Qualification } from './qualification.entity';
 
 @Entity()
@@ -84,33 +83,6 @@ export class Employee implements IEmployee {
   @Column()
   accountNumber: string;
 
-  @Column({
-    nullable: true,
-    default: TOTAL_ALLOWED_LEAVES,
-  })
-  totalAllowedLeaves: number;
-
-  @Column({
-    nullable: true,
-    default: TOTAL_ALLOWED_LEAVES,
-  })
-  totalLeaveBalance: number;
-
-  @Column({ nullable: true, default: LEAVE_POLICY.totalAllowedSickLeaves })
-  totalSickLeaveBalance: number;
-
-  @Column({ nullable: true, default: LEAVE_POLICY.totalAllowedAnnualLeaves })
-  totalAnnualLeaveBalance: number;
-
-  @Column({ nullable: true, default: LEAVE_POLICY.totalAllowedMaternityLeaves })
-  totalMaternityLeaveBalance: number;
-
-  @Column({ nullable: true, default: LEAVE_POLICY.totalAllowedMarriageLeaves })
-  totalMarriageLeaveBalance: number;
-
-  @Column({ nullable: true, default: LEAVE_POLICY.totalAllowedPaternityLeaves })
-  totalPaternityLeaveBalance: number;
-
   @CreateDateColumn()
   createdAt: Date;
 
@@ -148,10 +120,6 @@ export class Employee implements IEmployee {
   @OneToMany(() => Qualification, (qualification) => qualification.employee)
   @JoinColumn()
   qualifications: Qualification[];
-
-  @OneToMany(() => Leave, (leave) => leave.employee)
-  @JoinColumn()
-  leaves: Leave[];
 }
 
 interface IEmployee {
@@ -172,20 +140,6 @@ interface IEmployee {
   confirmationDate: string;
   tinNumber: string;
   accountNumber: string;
-  // total leaves
-  totalAllowedLeaves: number;
-  totalLeaveBalance: number;
-  // sick
-  totalSickLeaveBalance: number;
-  // annual
-  totalAnnualLeaveBalance: number;
-  // maternity
-  totalMaternityLeaveBalance: number;
-  // marriage
-  totalMarriageLeaveBalance: number;
-  // paternity
-  totalPaternityLeaveBalance: number;
-
   createdAt: Date;
   updatedAt: Date;
 }

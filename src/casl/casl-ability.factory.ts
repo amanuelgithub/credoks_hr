@@ -10,7 +10,6 @@ import { Company } from 'src/companies/entities/company.entity';
 import { Department } from 'src/departments/entities/department.entity';
 import { EmergencyContact } from 'src/employees/entities/emergency-contact.entity';
 import { Employee } from 'src/employees/entities/employee.entity';
-import { Leave } from 'src/employees/entities/leave.entity';
 import { Qualification } from 'src/employees/entities/qualification.entity';
 import { UserTypeEnum } from 'src/employees/enums/user-type.enum';
 import { Location } from 'src/locations/entities/location.entity';
@@ -32,7 +31,6 @@ type Subjects =
       | typeof Location
       | typeof Position
       | typeof Employee
-      | typeof Leave
       | typeof Payroll
       | typeof Qualification
       | typeof EmergencyContact
@@ -90,12 +88,6 @@ export class CaslAbilityFactory {
       can(Action.Update, EmergencyContact);
       can(Action.Read, EmergencyContact);
       can(Action.Delete, EmergencyContact);
-
-      // LEAVES
-      can(Action.Read, Leave);
-      can(Action.Create, Leave, { employeeId: { $eq: user.sub } });
-      can(Action.Update, Leave, { employeeId: { $eq: user.sub } }); // for cancle request
-      can(Action.Manage, Leave); // for accepting or decldining request
     } else if (user?.type === UserTypeEnum.HR) {
       // EMPLOYEE
       // can only read,create, and update if only employee's company === managers company
@@ -125,12 +117,6 @@ export class CaslAbilityFactory {
       can(Action.Update, Qualification);
       can(Action.Read, Qualification);
       can(Action.Delete, Qualification);
-
-      // LEAVES
-      can(Action.Read, Leave);
-      can(Action.Create, Leave, { employeeId: { $eq: user.sub } });
-      can(Action.Update, Leave, { employeeId: { $eq: user.sub } }); // for cancle request
-      can(Action.Manage, Leave); // for accepting or decldining request
     } else if (user?.type === UserTypeEnum.EMPLOYEE) {
       cannot(Action.Manage, Employee);
       // Employee can only read and update their own informations
@@ -153,10 +139,6 @@ export class CaslAbilityFactory {
       can(Action.Update, Qualification, { employeeId: { $eq: user.sub } });
       can(Action.Read, Qualification, { employeeId: { $eq: user.sub } });
       can(Action.Delete, Qualification, { employeeId: { $eq: user.sub } });
-
-      // LEAVES
-      can(Action.Create, Leave, { employeeId: { $eq: user.sub } });
-      can(Action.Update, Leave, { employeeId: { $eq: user.sub } }); // for cancle request
     }
 
     return build({
