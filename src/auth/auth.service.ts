@@ -17,7 +17,11 @@ export class AuthService {
   ) {}
 
   async login(employee: Employee): Promise<Tokens> {
-    if (!employee) throw new ForbiddenException('Access Denied');
+    // if their is no employee or the user type is employee then
+    // throw a forbidden error
+    if (!employee || employee.type === UserTypeEnum.EMPLOYEE) {
+      throw new ForbiddenException('Access Denied');
+    }
 
     const tokens = await this.getTokens(
       employee.id,
