@@ -7,6 +7,10 @@ export class UpdateQualificationDto {
 
   @IsOptional()
   @IsString()
+  school: string;
+
+  @IsOptional()
+  @IsString()
   educationStartedYear: string;
 
   @IsOptional()

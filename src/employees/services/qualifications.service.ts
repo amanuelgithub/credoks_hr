@@ -49,7 +49,14 @@ export class QualificationsService {
         .setMessage('you are not allowed to perform this action')
         .throwUnlessCan(Action.Create, qualification);
 
-      return await this.qualificationsRepository.save(qualification);
+      const createdQualification = await this.qualificationsRepository.save(
+        qualification,
+      );
+
+      const { employee, employeeId, createdAt, updatedAt, ...remaining } =
+        createdQualification;
+
+      return remaining as Qualification;
     } catch (error) {
       if (error instanceof ForbiddenError) {
         throw new ForbiddenException(error.message);
@@ -70,9 +77,15 @@ export class QualificationsService {
       );
     }
 
-    const qualifications = await this.qualificationsRepository.find({
-      where: { employeeId },
-    });
+    const qualifications = await this.qualificationsRepository
+      .createQueryBuilder('qualification')
+      .select('qualification.id')
+      .addSelect('qualification.education')
+      .addSelect('qualification.school')
+      .addSelect('qualification.educationStartedYear')
+      .addSelect('qualification.educationEndedYear')
+      .where('qualification.employeeId = :employeeId', { employeeId })
+      .getMany();
 
     if (!qualifications) {
       throw new NotFoundException('Qualifications not found');
@@ -85,9 +98,15 @@ export class QualificationsService {
     requester: any,
     qualificationId: string,
   ): Promise<Qualification> {
-    const qualification = await this.qualificationsRepository.findOne({
-      where: { id: qualificationId },
-    });
+    const qualification = await this.qualificationsRepository
+      .createQueryBuilder('qualification')
+      .select('qualification.id')
+      .addSelect('qualification.education')
+      .addSelect('qualification.school')
+      .addSelect('qualification.educationStartedYear')
+      .addSelect('qualification.educationEndedYear')
+      .where('qualification.id = :qualificationId', { qualificationId })
+      .getOne();
 
     const requesterAbility = this.caslAbilityFactory.createForUser(requester);
 

@@ -13,8 +13,11 @@ export class Qualification implements IQualification {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column()
   education: string;
+
+  @Column()
+  school: string;
 
   @Column()
   educationStartedYear: string;
@@ -32,13 +35,16 @@ export class Qualification implements IQualification {
   employeeId: string;
 
   // entities related fields //
-  @ManyToOne(() => Employee, (employee) => employee.qualifications)
+  @ManyToOne(() => Employee, (employee) => employee.qualifications, {
+    eager: false,
+  })
   employee: Employee;
 }
 
 interface IQualification {
   id: string;
   education: string;
+  school: string;
   educationStartedYear: string;
   educationEndedYear: string;
   createdAt: Date;

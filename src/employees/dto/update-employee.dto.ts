@@ -63,5 +63,9 @@ export class UpdateEmployeeDto {
 
   @IsOptional()
   @IsString()
-  accountNumber: string;
+  bankName: string;
+
+  @IsOptional()
+  @IsString()
+  bankAccountNumber: string;
 }

@@ -50,7 +50,10 @@ export class EmergencyContactsService {
         .setMessage('You are not allowed to perform this action!')
         .throwUnlessCan(Action.Create, emergencyContact);
 
-      return await this.emergencyContactsRepository.save(emergencyContact);
+      const { employee, employeeId, createAt, updatedAt, ...remaining } =
+        await this.emergencyContactsRepository.save(emergencyContact);
+
+      return remaining as EmergencyContact;
     } catch (error) {
       if (error instanceof ForbiddenError) {
         throw new ForbiddenException();
@@ -61,9 +64,16 @@ export class EmergencyContactsService {
   async findEmergencyContactsByEmployeeId(
     employeeId: string,
   ): Promise<EmergencyContact[]> {
-    const emergencyContacts = await this.emergencyContactsRepository.find({
-      where: { employeeId },
-    });
+    const emergencyContacts = await this.emergencyContactsRepository
+      .createQueryBuilder('emergency_contact')
+      .select('emergency_contact.id')
+      .addSelect('emergency_contact.id')
+      .addSelect('emergency_contact.firstName')
+      .addSelect('emergency_contact.lastName')
+      .addSelect('emergency_contact.phone')
+      .addSelect('emergency_contact.relation')
+      .where('emergency_contact.employeeId = :employeeId', { employeeId })
+      .getMany();
 
     if (!emergencyContacts) {
       throw new NotFoundException('Emergency contacts not found!');
@@ -73,9 +83,16 @@ export class EmergencyContactsService {
   }
 
   async findEmergencyContactById(ecId: string): Promise<EmergencyContact> {
-    const emergencyContact = await this.emergencyContactsRepository.findOne({
-      where: { id: ecId },
-    });
+    const emergencyContact = await this.emergencyContactsRepository
+      .createQueryBuilder('emergency_contact')
+      .select('emergency_contact.id')
+      .addSelect('emergency_contact.id')
+      .addSelect('emergency_contact.firstName')
+      .addSelect('emergency_contact.lastName')
+      .addSelect('emergency_contact.phone')
+      .addSelect('emergency_contact.relation')
+      .where('emergency_contact.id = :ecId', { ecId })
+      .getOne();
 
     if (!emergencyContact) {
       throw new NotFoundException('Emergency contact not found!');

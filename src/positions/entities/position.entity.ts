@@ -15,11 +15,8 @@ export class Position implements IPosition {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   title: string;
-
-  @Column()
-  salary: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -43,7 +40,6 @@ export class Position implements IPosition {
 export interface IPosition {
   id: string;
   title: string;
-  salary: number;
   createdAt: Date;
   updatedAt: Date;
 }

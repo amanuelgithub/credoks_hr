@@ -65,10 +65,9 @@ export class PositionsService {
   ): Promise<Position> {
     const position = await this.findPosition(id);
 
-    const { salary, title } = updatePositionDto;
+    const { title } = updatePositionDto;
 
     position.title = title;
-    position.salary = salary;
 
     this.positionsRepository.save(position);
 

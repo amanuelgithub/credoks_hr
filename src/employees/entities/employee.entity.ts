@@ -1,7 +1,3 @@
-import {
-  LEAVE_POLICY,
-  TOTAL_ALLOWED_LEAVES,
-} from 'src/employees/leave-policies';
 import { Company } from 'src/companies/entities/company.entity';
 import { Department } from 'src/departments/entities/department.entity';
 import { Position } from 'src/positions/entities/position.entity';
@@ -80,8 +76,17 @@ export class Employee implements IEmployee {
   @Column()
   tinNumber: string;
 
-  @Column()
-  accountNumber: string;
+  @Column({ nullable: true })
+  bankName: string;
+
+  @Column({ nullable: true })
+  bankAccountNumber: string;
+
+  @Column({ nullable: true })
+  salary: number;
+
+  @Column({ nullable: true })
+  benefits: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -139,7 +144,10 @@ interface IEmployee {
   dateOfJoining: string;
   confirmationDate: string;
   tinNumber: string;
-  accountNumber: string;
+  bankName: string;
+  bankAccountNumber: string;
+  salary: number;
+  benefits: number;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -196,7 +196,8 @@ export class EmployeesService {
         dateOfJoining,
         confirmationDate,
         tinNumber,
-        accountNumber,
+        bankName,
+        bankAccountNumber,
       } = updateEmployeeDto;
 
       employee.firstName = firstName;
@@ -213,7 +214,8 @@ export class EmployeesService {
       employee.dateOfJoining = dateOfJoining;
       employee.confirmationDate = confirmationDate;
       employee.tinNumber = tinNumber;
-      employee.accountNumber = accountNumber;
+      employee.bankName = bankName;
+      employee.bankAccountNumber = bankAccountNumber;
 
       return await this.employeesRepository.save(employee);
     } catch (error) {
@@ -300,7 +302,8 @@ export class EmployeesService {
       dateOfJoining,
       confirmationDate,
       tinNumber,
-      accountNumber,
+      bankName,
+      bankAccountNumber,
     } = updateEmployeeDto;
 
     employee.firstName = firstName;
@@ -317,7 +320,8 @@ export class EmployeesService {
     employee.dateOfJoining = dateOfJoining;
     employee.confirmationDate = confirmationDate;
     employee.tinNumber = tinNumber;
-    employee.accountNumber = accountNumber;
+    employee.bankName = bankName;
+    employee.bankAccountNumber = bankAccountNumber;
 
     return await this.employeesRepository.save(employee);
   }

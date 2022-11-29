@@ -7,6 +7,10 @@ export class CreateQualificationDto {
 
   @IsNotEmpty()
   @IsString()
+  school: string;
+
+  @IsNotEmpty()
+  @IsString()
   educationStartedYear: string;
 
   @IsNotEmpty()
