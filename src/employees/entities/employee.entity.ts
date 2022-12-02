@@ -16,6 +16,7 @@ import { GenderEnum } from '../enums/gender.enum';
 import { MaritalStatusEnum } from '../enums/marital-status.enum';
 import { UserTypeEnum } from '../enums/user-type.enum';
 import { EmergencyContact } from './emergency-contact.entity';
+import { Experience } from './experience.entity';
 import { Qualification } from './qualification.entity';
 
 @Entity()
@@ -125,6 +126,10 @@ export class Employee implements IEmployee {
   @OneToMany(() => Qualification, (qualification) => qualification.employee)
   @JoinColumn()
   qualifications: Qualification[];
+
+  @OneToMany(() => Experience, (experience) => experience.employee)
+  @JoinColumn()
+  experience: Experience;
 }
 
 interface IEmployee {

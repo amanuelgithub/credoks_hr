@@ -34,6 +34,7 @@ export class EmergencyContactsController {
     @Param('employeeId') employeeId: string,
     @Body() createEmergencyContactDto: CreateEmergencyContactDto,
   ): Promise<EmergencyContact> {
+    console.log('EmergencyContact created => ', createEmergencyContactDto);
     return this.emergencyContactsService.createEmergencyContactForEmployee(
       req.user,
       employeeId,

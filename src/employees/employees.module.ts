@@ -11,10 +11,18 @@ import { CaslModule } from 'src/casl/casl.module';
 import { CompaniesModule } from 'src/companies/companies.module';
 import { EmergencyContact } from './entities/emergency-contact.entity';
 import { Qualification } from './entities/qualification.entity';
+import { ExperiencesService } from './services/experiences.service';
+import { ExperiencesController } from './controllers/experiences.controller';
+import { Experience } from './entities/experience.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Employee, EmergencyContact, Qualification]),
+    TypeOrmModule.forFeature([
+      Employee,
+      EmergencyContact,
+      Qualification,
+      Experience,
+    ]),
     Employee,
     CaslModule,
     CompaniesModule,
@@ -23,11 +31,13 @@ import { Qualification } from './entities/qualification.entity';
     EmployeesController,
     QualificationsController,
     EmergencyContactsController,
+    ExperiencesController,
   ],
   providers: [
     EmployeesService,
     QualificationsService,
     EmergencyContactsService,
+    ExperiencesService,
   ],
   exports: [EmployeesService],
 })

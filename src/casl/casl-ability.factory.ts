@@ -10,6 +10,7 @@ import { Company } from 'src/companies/entities/company.entity';
 import { Department } from 'src/departments/entities/department.entity';
 import { EmergencyContact } from 'src/employees/entities/emergency-contact.entity';
 import { Employee } from 'src/employees/entities/employee.entity';
+import { Experience } from 'src/employees/entities/experience.entity';
 import { Qualification } from 'src/employees/entities/qualification.entity';
 import { UserTypeEnum } from 'src/employees/enums/user-type.enum';
 import { Location } from 'src/locations/entities/location.entity';
@@ -34,6 +35,7 @@ type Subjects =
       | typeof Payroll
       | typeof Qualification
       | typeof EmergencyContact
+      | typeof Experience
     >
   | 'all';
 
