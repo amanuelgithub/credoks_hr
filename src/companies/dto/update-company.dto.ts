@@ -9,16 +9,22 @@ export class UpdateCompanyDto {
   name: string;
 
   @IsOptional()
-  locations: Location[];
-
-  @IsOptional()
-  departments: Department[];
-
-  @IsOptional()
   @IsString()
   logo: string;
 
   @IsOptional()
   @IsEnum(CompanyStatusEnum)
   companyStatus: CompanyStatusEnum;
+
+  @IsOptional()
+  bussinessType: string;
+
+  @IsOptional()
+  summary: string;
+
+  @IsOptional()
+  locations: Location[];
+
+  @IsOptional()
+  departments: Department[];
 }

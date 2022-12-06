@@ -14,6 +14,7 @@ import { Qualification } from './entities/qualification.entity';
 import { ExperiencesService } from './services/experiences.service';
 import { ExperiencesController } from './controllers/experiences.controller';
 import { Experience } from './entities/experience.entity';
+import { EmployeesReportService } from './services/employees-report.service';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { Experience } from './entities/experience.entity';
     QualificationsService,
     EmergencyContactsService,
     ExperiencesService,
+    EmployeesReportService,
   ],
-  exports: [EmployeesService],
+  exports: [EmployeesService, EmployeesReportService],
 })
 export class EmployeesModule {}

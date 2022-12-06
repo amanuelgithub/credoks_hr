@@ -13,6 +13,7 @@ import { LocationsModule } from './locations/locations.module';
 import { PositionsModule } from './positions/positions.module';
 import { PayrollModule } from './payroll/payroll.module';
 import { CaslModule } from './casl/casl.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -46,6 +47,8 @@ import { CaslModule } from './casl/casl.module';
     PayrollModule,
 
     CaslModule,
+
+    ReportsModule,
   ],
 })
 export class AppModule {}

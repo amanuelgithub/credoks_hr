@@ -26,7 +26,7 @@ export class Company implements ICompany {
   @Column({ type: 'enum', enum: CompanyStatusEnum })
   companyStatus: CompanyStatusEnum;
 
-  @Column()
+  @Column({ nullable: true })
   bussinessType: string;
 
   @Column()
