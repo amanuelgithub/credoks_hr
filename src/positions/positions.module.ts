@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Position } from './entities/position.entity';
 import { CaslModule } from 'src/casl/casl.module';
 import { DepartmentsModule } from 'src/departments/departments.module';
+import { PositionsReportService } from './positions-report.service';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { DepartmentsModule } from 'src/departments/departments.module';
     DepartmentsModule,
   ],
   controllers: [PositionsController],
-  providers: [PositionsService],
+  providers: [PositionsService, PositionsReportService],
+  exports: [PositionsReportService],
 })
 export class PositionsModule {}

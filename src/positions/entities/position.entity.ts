@@ -1,3 +1,4 @@
+import { Company } from 'src/companies/entities/company.entity';
 import { Department } from 'src/departments/entities/department.entity';
 import { Employee } from 'src/employees/entities/employee.entity';
 import {
@@ -25,6 +26,9 @@ export class Position implements IPosition {
   updatedAt: Date;
 
   @Column()
+  companyId: string;
+
+  @Column()
   departmentId: string;
 
   // entity relation fields //
@@ -35,6 +39,9 @@ export class Position implements IPosition {
 
   @ManyToOne(() => Department, (department) => department.positions)
   department: Department;
+
+  @ManyToOne(() => Company, (company) => company.positions)
+  company: Company;
 }
 
 export interface IPosition {

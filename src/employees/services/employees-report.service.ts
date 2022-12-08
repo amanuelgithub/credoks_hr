@@ -18,4 +18,14 @@ export class EmployeesReportService {
 
     return totalEmployees;
   }
+
+  // return total number of employees of a single company
+  async getTotalNumberOfEmployeesOfCompany(companyId: string): Promise<number> {
+    const totalEmpOfComp = await this.employeesRepository
+      .createQueryBuilder('employee')
+      .where('employee.companyId = :companyId', { companyId })
+      .getCount();
+
+    return totalEmpOfComp;
+  }
 }

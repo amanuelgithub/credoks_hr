@@ -1,4 +1,4 @@
-export interface ITotalStats {
+export interface ITotalCompaniesStats {
   totalCompanies: number;
   totalEmployees: number;
   totalDepartments: number;

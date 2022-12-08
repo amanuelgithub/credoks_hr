@@ -18,4 +18,16 @@ export class DepartmentsReportService {
 
     return totalDepartments;
   }
+
+  // return total number of departments of a single company
+  async getTotalNumberOfDepartmentsOfCompany(
+    companyId: string,
+  ): Promise<number> {
+    const totalEmpOfComp = await this.departmentsRepository
+      .createQueryBuilder('department')
+      .where('department.companyId = :companyId', { companyId })
+      .getCount();
+
+    return totalEmpOfComp;
+  }
 }

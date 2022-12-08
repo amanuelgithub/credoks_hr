@@ -2,6 +2,7 @@ import { Department } from 'src/departments/entities/department.entity';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Location } from 'src/locations/entities/location.entity';
 import { Payroll } from 'src/payroll/entities/payroll.entity';
+import { Position } from 'src/positions/entities/position.entity';
 import {
   Column,
   CreateDateColumn,
@@ -50,6 +51,9 @@ export class Company implements ICompany {
 
   @OneToMany(() => Employee, (employee) => employee.company)
   employees: Employee[];
+
+  @OneToMany(() => Position, (position) => position.company)
+  positions: Position[];
 }
 
 export interface ICompany {
