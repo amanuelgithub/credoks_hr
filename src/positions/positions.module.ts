@@ -6,11 +6,13 @@ import { Position } from './entities/position.entity';
 import { CaslModule } from 'src/casl/casl.module';
 import { DepartmentsModule } from 'src/departments/departments.module';
 import { PositionsReportService } from './positions-report.service';
+import { CompaniesModule } from 'src/companies/companies.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Position]),
     CaslModule,
+    CompaniesModule,
     DepartmentsModule,
   ],
   controllers: [PositionsController],

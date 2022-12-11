@@ -47,6 +47,8 @@ export class Position implements IPosition {
 export interface IPosition {
   id: string;
   title: string;
+  companyId: string;
+  departmentId: string;
   createdAt: Date;
   updatedAt: Date;
 }

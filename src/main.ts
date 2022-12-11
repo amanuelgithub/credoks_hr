@@ -20,7 +20,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  const appPort = process.env.PORT || appConfig.APP_PORT;
+  const appPort = process.env.APP_PORT || appConfig.APP_PORT || 3001;
 
   await app.listen(appPort);
 }

@@ -30,6 +30,15 @@ export class PositionsController {
     return this.positionsService.createPosition(createPositionDto);
   }
 
+  @Get('/company/:companyId')
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Position))
+  findPositionsByCompany(
+    @Param('companyId') companyId: string,
+  ): Promise<Position[]> {
+    return this.positionsService.findPositionsByCompany(companyId);
+  }
+
   @Get('/department/:departmentId')
   @UseGuards(AtGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Position))

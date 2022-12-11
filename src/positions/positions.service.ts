@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CompaniesService } from 'src/companies/companies.service';
 import { DepartmentsService } from 'src/departments/departments.service';
 import { Repository } from 'typeorm';
 import { CreatePositionDto } from './dto/create-position.dto';
@@ -11,13 +12,16 @@ export class PositionsService {
   constructor(
     @InjectRepository(Position)
     private positionsRepository: Repository<Position>,
+    private companiesService: CompaniesService,
     private departmentsService: DepartmentsService,
   ) {}
 
   async createPosition(
     createPositionDto: CreatePositionDto,
   ): Promise<Position> {
-    const { departmentId } = createPositionDto;
+    const { departmentId, companyId } = createPositionDto;
+
+    const company = await this.companiesService.findOne(companyId);
 
     const department = await this.departmentsService.findDepartmentById(
       departmentId,
@@ -25,7 +29,7 @@ export class PositionsService {
 
     const position = this.positionsRepository.create(createPositionDto);
 
-    // create a relation with department
+    position.company = company;
     position.department = department;
 
     return await this.positionsRepository.save(position);
@@ -35,6 +39,18 @@ export class PositionsService {
     const positions = await this.positionsRepository.find();
 
     if (!positions) throw new NotFoundException('Position Not Found!');
+
+    return positions;
+  }
+
+  async findPositionsByCompany(companyId: string): Promise<Position[]> {
+    const positions = await this.positionsRepository.find({
+      where: { companyId },
+    });
+
+    if (!positions) {
+      throw new NotFoundException('Position Not Found!');
+    }
 
     return positions;
   }

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  #
+  # CREDOKS HR BACKEND
+  #
+  credoks-hr-backend:
+    image: credoks-hr-backend:v0.0.1
+    container_name: credoks-hr-backend
+    env_file:
+      - ./env/stage.dev.env
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: dev
+    ports:
+      - 3001:3001
+    restart: unless-stopped
+    depends_on:
+      - credoks-hr-database
+    volumes:
+      - ./src:/app/src
+
+  #
+  # CREDOKS HR DATABASE
+  #
+  credoks-hr-database:
+    image: postgres
+    # container_name: credoks-hr-database
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: password
+
+  #
+  # PgAdmin 4 for the web
+  #
+  db-admin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: pgadmin4
