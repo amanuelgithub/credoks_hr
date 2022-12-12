@@ -52,6 +52,9 @@ export class Employee implements IEmployee {
   password: string;
 
   @Column({ nullable: true })
+  profileImage?: string;
+
+  @Column({ nullable: true })
   hashedRt?: string;
 
   @Column({
@@ -143,6 +146,7 @@ interface IEmployee {
   email: string;
   phone: string;
   password: string;
+  profileImage?: string;
   hashedRt?: string;
   employmentStatus: EmploymentStatusEnum;
   maritalStatus: MaritalStatusEnum;

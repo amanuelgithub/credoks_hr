@@ -244,6 +244,17 @@ export class EmployeesService {
     return await this.employeesRepository.save(employee);
   }
 
+  // upload profile images
+  async uploadProfileImage(
+    id: string,
+    profileImage: { profileImage: any },
+  ): Promise<any> {
+    const user = await this.findEmployeeById(id);
+    user.profileImage = profileImage.profileImage;
+
+    return this.employeesRepository.save(user);
+  }
+
   //=================================================================================//
   // Methods below this lien are not directly being used by the employees-controller //
   //=================================================================================//

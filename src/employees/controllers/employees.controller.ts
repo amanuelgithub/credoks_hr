@@ -6,8 +6,11 @@ import {
   Patch,
   Param,
   Delete,
+  Response,
   UseGuards,
   Req,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   EmployeesService,
@@ -21,6 +24,30 @@ import { PoliciesGuard } from 'src/casl/policies.guard';
 import { CheckPolicies } from 'src/casl/check-policy.decorator';
 import { Action, AppAbility } from 'src/casl/casl-ability.factory';
 import { ChangePasswordDto } from '../dto/change-password.dto';
+
+import { v4 as uuidv4 } from 'uuid';
+import path = require('path');
+import { join } from 'path';
+import { diskStorage } from 'multer';
+import { FileInterceptor } from '@nestjs/platform-express';
+
+/**
+ * used to store the uploaded profileImage to the
+ * destination folder specified
+ */
+export const storage = {
+  storage: diskStorage({
+    destination: './uploads/profileImages',
+    filename: (req, file, cb) => {
+      const filename: string =
+        path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+
+      const extension: string = path.parse(file.originalname).ext;
+
+      cb(null, `${filename}${extension}`);
+    },
+  }),
+};
 
 @Controller('employees')
 export class EmployeesController {
@@ -118,5 +145,25 @@ export class EmployeesController {
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
     return this.employeesService.changePassword(id, changePasswordDto);
+  }
+
+  @Post('upload-profile-img/:id')
+  @UseGuards(AtGuard)
+  @UseInterceptors(FileInterceptor('file', storage))
+  uploadProfileImage(@Param('id') id: string, @UploadedFile() file) {
+    return this.employeesService.uploadProfileImage(id, {
+      profileImage: file.filename,
+    });
+  }
+
+  @Get('profile-images/:imagename')
+  @UseGuards(AtGuard)
+  findProfileImage(
+    @Param('imagename') imagename,
+    @Response() res,
+  ): Promise<any> {
+    return res.sendFile(
+      join(process.cwd(), 'uploads/profileImages/' + imagename),
+    );
   }
 }
