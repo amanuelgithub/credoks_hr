@@ -6,10 +6,6 @@ export class CreateCompanyDto {
   @IsString()
   name: string;
 
-  @IsOptional()
-  @IsString()
-  logo: string;
-
   @IsNotEmpty()
   @IsEnum(CompanyStatusEnum)
   companyStatus: CompanyStatusEnum;

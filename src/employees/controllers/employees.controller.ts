@@ -157,7 +157,7 @@ export class EmployeesController {
   }
 
   @Get('profile-images/:imagename')
-  @UseGuards(AtGuard)
+  // @UseGuards(AtGuard)
   findProfileImage(
     @Param('imagename') imagename,
     @Response() res,

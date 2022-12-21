@@ -74,7 +74,7 @@ export class CreateEmployeeDto {
 
   @IsNotEmpty()
   @IsString()
-  accountNumber: string;
+  bankAccountNumber: string;
 
   @IsOptional()
   @IsString()
