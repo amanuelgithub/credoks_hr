@@ -35,7 +35,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
  * used to store the uploaded profileImage to the
  * destination folder specified
  */
-export const storage = {
+export const storageEmpProfileImage = {
   storage: diskStorage({
     destination: './uploads/profileImages',
     filename: (req, file, cb) => {
@@ -149,7 +149,7 @@ export class EmployeesController {
 
   @Post('upload-profile-img/:id')
   @UseGuards(AtGuard)
-  @UseInterceptors(FileInterceptor('file', storage))
+  @UseInterceptors(FileInterceptor('file', storageEmpProfileImage))
   uploadProfileImage(@Param('id') id: string, @UploadedFile() file) {
     return this.employeesService.uploadProfileImage(id, {
       profileImage: file.filename,

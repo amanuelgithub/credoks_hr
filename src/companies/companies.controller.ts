@@ -6,17 +6,44 @@ import {
   Patch,
   Param,
   Delete,
+  Response,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+
 import { AtGuard } from 'src/auth/guards/at.guard';
 import { Action, AppAbility } from 'src/casl/casl-ability.factory';
 import { CheckPolicies } from 'src/casl/check-policy.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
-import { CompaniesReportService } from './companies-report.service';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from './entities/company.entity';
+
+import { v4 as uuidv4 } from 'uuid';
+import path = require('path');
+import { join } from 'path';
+import { diskStorage } from 'multer';
+import { FileInterceptor } from '@nestjs/platform-express';
+
+/**
+ * used to store the uploaded company logo to the
+ * destination folder specified
+ */
+export const storageCompanyLogo = {
+  storage: diskStorage({
+    destination: './uploads/companiesLogos',
+    filename: (req, file, cb) => {
+      const filename: string =
+        path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+
+      const extension: string = path.parse(file.originalname).ext;
+
+      cb(null, `${filename}${extension}`);
+    },
+  }),
+};
 
 @Controller('companies')
 export class CompaniesController {
@@ -58,5 +85,28 @@ export class CompaniesController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, Company))
   remove(@Param('id') id: string): Promise<void> {
     return this.companiesService.remove(id);
+  }
+
+  @Patch(':companyId/upload-logo')
+  @UseGuards(AtGuard)
+  @UseInterceptors(FileInterceptor('file', storageCompanyLogo))
+  uploadCompanyLogo(
+    @Param('companyId') companyId: string,
+    @UploadedFile() file,
+  ) {
+    return this.companiesService.uploadCompanyLogo(companyId, {
+      logo: file.filename,
+    });
+  }
+
+  @Get('companies-logos/:imagename')
+  // @UseGuards(AtGuard)
+  findProfileImage(
+    @Param('imagename') imagename,
+    @Response() res,
+  ): Promise<any> {
+    return res.sendFile(
+      join(process.cwd(), 'uploads/companiesLogos/' + imagename),
+    );
   }
 }

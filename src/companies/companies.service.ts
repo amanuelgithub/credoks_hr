@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -13,6 +17,14 @@ export class CompaniesService {
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
+    const oldCompany = this.companiesRepository.findOne({
+      where: { name: createCompanyDto.name },
+    });
+
+    if (oldCompany) {
+      throw new ConflictException('Company with same name already exists!');
+    }
+
     const company = this.companiesRepository.create(createCompanyDto);
     return await this.companiesRepository.save(company);
   }
@@ -31,6 +43,13 @@ export class CompaniesService {
       throw new NotFoundException('Company Not Found!');
     }
     return company;
+  }
+
+  async uploadCompanyLogo(id: string, logo: { logo: any }): Promise<any> {
+    const company = await this.findOne(id);
+    company.logo = logo.logo;
+
+    return this.companiesRepository.save(company);
   }
 
   async update(
