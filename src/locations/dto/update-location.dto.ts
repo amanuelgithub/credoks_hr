@@ -2,10 +2,13 @@ import { IsOptional } from 'class-validator';
 
 export class UpdateLocationDto {
   @IsOptional()
-  country: string;
+  city: string;
 
   @IsOptional()
-  city: string;
+  region: string;
+
+  @IsOptional()
+  woreda: string;
 
   @IsOptional()
   specificLocationName?: string;

@@ -27,15 +27,16 @@ export class LocationsService {
     requester: any,
     createLocationDto: CreateLocationDto,
   ): Promise<Location> {
-    const { companyId, country, city, specificLocationName } =
+    const { companyId, city, region, woreda, specificLocationName } =
       createLocationDto;
 
     const company = await this.companiesService.findOne(companyId);
 
     const location = this.locationsRepository.create({
       companyId,
-      country,
+      region,
       city,
+      woreda,
       specificLocationName,
     });
 
@@ -128,9 +129,10 @@ export class LocationsService {
         .setMessage("You don't have the ability to update this location!")
         .throwUnlessCan(Action.Update, location);
 
-      const { country, city, specificLocationName } = updateLocationDto;
+      const { city, region, woreda, specificLocationName } = updateLocationDto;
 
-      location.country = country;
+      location.region = region;
+      location.woreda = woreda;
       location.city = city;
       location.specificLocationName = specificLocationName;
 

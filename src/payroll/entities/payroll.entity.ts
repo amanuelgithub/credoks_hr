@@ -1,9 +1,12 @@
 import { Company } from 'src/companies/entities/company.entity';
+import { Pay } from 'src/pay/entities/pay.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,23 +23,20 @@ export class Payroll implements IPayroll {
   @Column()
   year: number;
 
-  @Column()
+  @Column({ type: 'float' })
   totalNetPaid: number;
 
-  @Column()
+  @Column({ type: 'float' })
   totalTaxPaid: number;
 
-  @Column()
+  @Column({ type: 'float' })
   totalDeduction: number;
 
-  @Column()
+  @Column({ type: 'float' })
   totalPaid: number;
 
   @Column()
   totalEmployeesPaid: number;
-
-  @CreateDateColumn()
-  processedDate: Date;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -44,9 +44,16 @@ export class Payroll implements IPayroll {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column({ nullable: true })
+  companyId: string;
+
   // entity related fields //
   @ManyToOne(() => Company, (company) => company.payrolls)
   company: Company;
+
+  @OneToMany(() => Pay, (pay) => pay.payroll)
+  @JoinColumn()
+  pays: Pay[];
 }
 
 interface IPayroll {
@@ -58,7 +65,7 @@ interface IPayroll {
   totalDeduction: number;
   totalPaid: number;
   totalEmployeesPaid: number;
-  processedDate: Date;
+  // processedDate: Date;
   createdAt: Date;
   updatedAt: Date;
 }

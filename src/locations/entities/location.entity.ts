@@ -1,12 +1,10 @@
 import { Company } from 'src/companies/entities/company.entity';
-import { Employee } from 'src/employees/entities/employee.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -16,11 +14,17 @@ export class Location implements ILocation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ default: 'Ethiopia', nullable: true })
   country: string;
 
   @Column()
   city: string;
+
+  @Column({ nullable: true })
+  region: string;
+
+  @Column({ nullable: true })
+  woreda: string;
 
   @Column({ nullable: true })
   specificLocationName?: string;
@@ -47,6 +51,8 @@ export interface ILocation {
   id: string;
   country: string;
   city: string;
+  region: string;
+  woreda: string;
   specificLocationName?: string;
   createdAt: Date;
   updatedAt: Date;

@@ -64,9 +64,10 @@ export class CompaniesController {
   }
 
   @Get(':id')
-  @UseGuards(AtGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Company))
+  // @UseGuards(AtGuard, PoliciesGuard)
+  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Company))
   findOne(@Param('id') id: string): Promise<Company> {
+    console.log('find one company hitted: ', id);
     return this.companiesService.findOne(id);
   }
 

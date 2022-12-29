@@ -7,11 +7,15 @@ export class CreateLocationDto {
 
   @IsNotEmpty()
   @IsString()
-  country: string;
+  city: string;
 
   @IsNotEmpty()
   @IsString()
-  city: string;
+  region: string;
+
+  @IsNotEmpty()
+  @IsString()
+  woreda: string;
 
   @IsString()
   @IsOptional()

@@ -256,8 +256,22 @@ export class EmployeesService {
   }
 
   //=================================================================================//
-  // Methods below this lien are not directly being used by the employees-controller //
+  // Methods below this line are not directly being used by the employees-controller //
   //=================================================================================//
+
+  /** returns list of all eligible employees for payment in the specificed company */
+  async findAllActiveEmployees(companyId: string): Promise<Employee[]> {
+    const employees = await this.employeesRepository.find({
+      where: { eligibleForPayment: true, companyId: companyId },
+    });
+
+    if (!employees) {
+      throw new NotFoundException('Not Active Employees Found');
+    }
+
+    return employees;
+  }
+
   async findEmployeeByEmail(email: string): Promise<Employee> {
     const employee = await this.employeesRepository
       .createQueryBuilder('employee')

@@ -1,5 +1,6 @@
 import { Company } from 'src/companies/entities/company.entity';
 import { Department } from 'src/departments/entities/department.entity';
+import { Pay } from 'src/pay/entities/pay.entity';
 import { Position } from 'src/positions/entities/position.entity';
 import {
   Column,
@@ -92,6 +93,9 @@ export class Employee implements IEmployee {
   @Column({ nullable: true })
   benefits: number;
 
+  @Column({ nullable: true, default: true })
+  eligibleForPayment: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -133,6 +137,10 @@ export class Employee implements IEmployee {
   @OneToMany(() => Experience, (experience) => experience.employee)
   @JoinColumn()
   experience: Experience;
+
+  @OneToMany(() => Pay, (pay) => pay.employee)
+  @JoinColumn()
+  pays: Pay[];
 }
 
 interface IEmployee {
@@ -157,6 +165,7 @@ interface IEmployee {
   bankAccountNumber: string;
   salary: number;
   benefits: number;
+  eligibleForPayment: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
