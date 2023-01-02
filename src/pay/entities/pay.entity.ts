@@ -6,7 +6,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class Pay implements IPay {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ type: 'float' })
   netPay: number;
@@ -26,6 +26,9 @@ export class Pay implements IPay {
   @Column()
   year: number;
 
+  @Column({ nullable: true })
+  payrollId: string;
+
   @ManyToOne(() => Employee, (employee) => employee.pays, { eager: false })
   employee: Employee;
 
@@ -34,11 +37,12 @@ export class Pay implements IPay {
 }
 
 export interface IPay {
-  id: number;
+  id: string;
   netPay: number;
   deduction: number;
   salaryIncomeTax: number;
   employeePension: number;
+  payrollId: string;
   year: number;
   month: MonthEnum;
 }

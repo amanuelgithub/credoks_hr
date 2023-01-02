@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { MonthEnum } from '../enums/month.enum';
 
 export class CreatePayrollDto {
@@ -7,7 +7,7 @@ export class CreatePayrollDto {
   companyId: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsEnum(MonthEnum)
   month: MonthEnum;
 
   @IsNotEmpty()

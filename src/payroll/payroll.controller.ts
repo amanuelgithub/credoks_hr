@@ -1,6 +1,7 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { PayrollService } from './payroll.service';
 import { CreatePayrollDto } from './dto/create-payroll.dto';
+import { Payroll } from './entities/payroll.entity';
 
 @Controller('payroll')
 export class PayrollController {
@@ -9,5 +10,10 @@ export class PayrollController {
   @Post('/process-payroll')
   create(@Body() createPayrollDto: CreatePayrollDto) {
     return this.payrollService.create(createPayrollDto);
+  }
+
+  @Get()
+  findAll(): Promise<Payroll[]> {
+    return this.payrollService.findAll();
   }
 }

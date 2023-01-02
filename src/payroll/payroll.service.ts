@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common/enums';
+import { ConflictException, HttpException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompaniesService } from 'src/companies/companies.service';
 import { Employee } from 'src/employees/entities/employee.entity';
@@ -10,6 +12,7 @@ import { PayService } from 'src/pay/pay.service';
 import { Repository } from 'typeorm';
 import { CreatePayrollDto } from './dto/create-payroll.dto';
 import { Payroll } from './entities/payroll.entity';
+import { MonthEnum } from './enums/month.enum';
 
 interface IEmployeePay {
   employee: Employee;
@@ -41,7 +44,7 @@ export class PayrollService {
   // totalDeduction
   // totalPaid
   // totalEmployeesPaid
-  calculatePayroll(employees: Employee[]): IEmployeePay[] {
+  private calculatePayroll(employees: Employee[]): IEmployeePay[] {
     const employeesPay: IEmployeePay[] = [];
 
     employees.map((employee) => {
@@ -85,7 +88,7 @@ export class PayrollService {
     return employeesPay;
   }
 
-  getPayRangeClass(grossSalary: number): {
+  private getPayRangeClass(grossSalary: number): {
     range: {
       from: number;
       to: number;
@@ -106,7 +109,33 @@ export class PayrollService {
     }
   }
 
-  async create(createPayrollDto: CreatePayrollDto) {
+  /** check if payroll is already processed for the specified year and month */
+  private async checkIfPayrollIsAlreadyProcessed(
+    year: number,
+    month: MonthEnum,
+  ) {
+    const payroll = await this.payrollRepository
+      .createQueryBuilder('payroll')
+      .where('year = :year', { year })
+      .andWhere('month = :month', { month })
+      .getOne();
+
+    if (payroll) {
+      return true;
+    }
+
+    return false;
+  }
+
+  async create(createPayrollDto: CreatePayrollDto): Promise<any> {
+    const { companyId, month, year } = createPayrollDto;
+
+    if (await this.checkIfPayrollIsAlreadyProcessed(year, month)) {
+      throw new ConflictException(
+        `Payroll already processed for year: ${year} and month: ${month}`,
+      );
+    }
+
     const pays: Pay[] = [];
 
     let totalNetPaid = 0;
@@ -114,8 +143,6 @@ export class PayrollService {
     let totalDeduction = 0;
     let totalPaid = 0;
     let totalEmployeesPaid = 0;
-
-    const { companyId } = createPayrollDto;
 
     const company = await this.companiesService.findOne(companyId);
 
@@ -135,11 +162,14 @@ export class PayrollService {
       const processedPayroll = processedPayrolls[i];
 
       const pay = await this.payService.create({
+        payrollId: payrollInstance.id,
         employee: processedPayroll.employee,
         netPay: processedPayroll.netPay,
         deduction: processedPayroll.deduction,
         salaryIncomeTax: processedPayroll.salaryIncomeTax,
         employeePension: processedPayroll.employeePension,
+        month: month,
+        year: year,
       } as CreatePayDto);
 
       pays.push({ ...pay });
@@ -162,5 +192,17 @@ export class PayrollService {
     payrollInstance.totalEmployeesPaid = totalEmployeesPaid;
 
     await this.payrollRepository.save(payrollInstance);
+
+    throw new HttpException('Success', HttpStatus.CREATED);
+  }
+
+  async findAll(): Promise<Payroll[]> {
+    const payrolls = await this.payrollRepository.find();
+
+    if (!payrolls) {
+      throw new NotFoundException('No Payroll found!');
+    }
+
+    return payrolls;
   }
 }
