@@ -29,10 +29,10 @@ export class Pay implements IPay {
   @Column({ nullable: true })
   payrollId: string;
 
-  @ManyToOne(() => Employee, (employee) => employee.pays, { eager: false })
+  @ManyToOne(() => Employee, (employee) => employee.pays, { eager: true })
   employee: Employee;
 
-  @ManyToOne(() => Payroll, (payroll) => payroll.pays, { eager: false })
+  @ManyToOne(() => Payroll, (payroll) => payroll.pays, { eager: true })
   payroll: Payroll;
 }
 

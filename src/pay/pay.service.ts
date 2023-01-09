@@ -19,7 +19,11 @@ export class PayService {
   }
 
   findAllPaysPayPayrollId(payrollId: string): Promise<Pay[]> {
-    const pays = this.payRepository.find({ where: { payrollId } });
+    const pays = this.payRepository
+      .createQueryBuilder('pay')
+      .leftJoinAndSelect('pay.employee', 'employee')
+      .where('pay.payrollId = :payrollId', { payrollId })
+      .getMany();
 
     if (!pays) {
       throw new NotFoundException(
@@ -28,5 +32,15 @@ export class PayService {
     }
 
     return pays;
+  }
+
+  async findPayById(payId: string): Promise<Pay> {
+    const pay = await this.payRepository.findOne({ where: { id: payId } });
+
+    const { payroll, employee } = pay;
+
+    console.log('Payroll: ', payroll, 'Employee: ', employee);
+
+    return pay;
   }
 }

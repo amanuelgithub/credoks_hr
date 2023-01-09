@@ -12,4 +12,10 @@ export class PayController {
   ): Promise<Pay[]> {
     return this.payService.findAllPaysPayPayrollId(payrollId);
   }
+
+  /** find all payment related information. used for the payslip page */
+  @Get('/:payId/payslip')
+  findPayInfoByPayId(@Param('payId') payId: string): Promise<Pay> {
+    return this.payService.findPayById(payId);
+  }
 }
