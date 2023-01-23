@@ -1,5 +1,5 @@
 import {
-  IsOptional,
+  IsNotEmpty,
   IsString,
   Matches,
   MaxLength,
@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 
 export class ChangePasswordDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @MinLength(6)
   @MaxLength(32)

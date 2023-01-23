@@ -119,28 +119,32 @@ export class CaslAbilityFactory {
       can(Action.Update, Qualification);
       can(Action.Read, Qualification);
       can(Action.Delete, Qualification);
-    } else if (user?.type === UserTypeEnum.EMPLOYEE) {
-      cannot(Action.Manage, Employee);
-      // Employee can only read and update their own informations
-      can(Action.Read, Employee, { id: { $eq: user.sub } });
-      can(Action.Update, Employee, { id: { $eq: user.sub } });
-      cannot(Action.Delete, Employee).because(
-        'You are neither hr, manager nor admin...haha :)',
-      );
 
+      // EXPERIENCE
+      can(Action.Manage, Experience);
+      can(Action.Create, Experience);
+      can(Action.Update, Experience);
+      can(Action.Read, Experience);
+    } else if (user?.type === UserTypeEnum.EMPLOYEE) {
+      // cannot(Action.Manage, Employee);
+      // Employee can only read and update their own informations
+      // can(Action.Read, Employee, { id: { $eq: user.sub } });
+      // can(Action.Update, Employee, { id: { $eq: user.sub } });
+      // cannot(Action.Delete, Employee).because(
+      //   'You are neither hr, manager nor admin...haha :)',
+      // );
       // EMERGENCY CONTACT INFO
       // employees can create, read, update and delete their own emergency contact details
-      can(Action.Create, EmergencyContact, { employeeId: { $eq: user.sub } });
-      can(Action.Update, EmergencyContact, { employeeId: { $eq: user.sub } });
-      can(Action.Read, EmergencyContact, { employeeId: { $eq: user.sub } });
-      can(Action.Delete, EmergencyContact, { employeeId: { $eq: user.sub } });
-
+      // can(Action.Create, EmergencyContact, { employeeId: { $eq: user.sub } });
+      // can(Action.Update, EmergencyContact, { employeeId: { $eq: user.sub } });
+      // can(Action.Read, EmergencyContact, { employeeId: { $eq: user.sub } });
+      // can(Action.Delete, EmergencyContact, { employeeId: { $eq: user.sub } });
       // QUALIFICATION INFORMATION
       // employees can create, read, update and delete their own qualificaitons
-      can(Action.Create, Qualification, { employeeId: { $eq: user.sub } });
-      can(Action.Update, Qualification, { employeeId: { $eq: user.sub } });
-      can(Action.Read, Qualification, { employeeId: { $eq: user.sub } });
-      can(Action.Delete, Qualification, { employeeId: { $eq: user.sub } });
+      // can(Action.Create, Qualification, { employeeId: { $eq: user.sub } });
+      // can(Action.Update, Qualification, { employeeId: { $eq: user.sub } });
+      // can(Action.Read, Qualification, { employeeId: { $eq: user.sub } });
+      // can(Action.Delete, Qualification, { employeeId: { $eq: user.sub } });
     }
 
     return build({

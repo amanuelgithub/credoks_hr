@@ -45,7 +45,7 @@ export class EmergencyContactsController {
   @Get('/employee/:employeeId')
   @UseGuards(AtGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Manage, EmergencyContact),
+    ability.can(Action.Read, EmergencyContact),
   )
   findEmergencyContactsOfEmployee(
     @Param('employeeId') employeeId: string,

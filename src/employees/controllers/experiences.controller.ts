@@ -6,6 +6,7 @@ import {
   Param,
   UseGuards,
   Req,
+  Delete,
 } from '@nestjs/common';
 import { ExperiencesService } from '../services/experiences.service';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -49,5 +50,14 @@ export class ExperiencesController {
       req.user,
       employeeId,
     );
+  }
+
+  @Delete(':id')
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Delete, Experience),
+  )
+  remove(@Param('id') id: string): Promise<void> {
+    return this.experiencesService.remove(id);
   }
 }

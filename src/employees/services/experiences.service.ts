@@ -82,4 +82,12 @@ export class ExperiencesService {
 
     return experiences;
   }
+  async remove(experienceId: string): Promise<void> {
+    const result = await this.experiencesRepository.delete({
+      id: experienceId,
+    });
+    if (result.affected === 0) {
+      throw new NotFoundException('Experience Not Found!');
+    }
+  }
 }
