@@ -16,6 +16,7 @@ import { UserTypeEnum } from '../enums/user-type.enum';
 import { ForbiddenError } from '@casl/ability';
 import { EmploymentStatusEnum } from '../enums/employment-status.enum';
 import { ChangePasswordDto } from '../dto/change-password.dto';
+import { UpdateEmploymentStatusDto } from '../dto/update-employment-status.dto';
 
 export interface ICompanyEmployeeReport {
   companyName: string;
@@ -223,6 +224,20 @@ export class EmployeesService {
         throw new ForbiddenException();
       }
     }
+  }
+
+  async updateEmployementStatus(
+    requestingUser: any,
+    id: string,
+    updateEmploymentStatusDto: UpdateEmploymentStatusDto,
+  ): Promise<Employee> {
+    const employee = await this.findEmployeeById(id);
+
+    const { employmentStatus } = updateEmploymentStatusDto;
+
+    employee.employmentStatus = employmentStatus;
+
+    return await this.employeesRepository.save(employee);
   }
 
   async remove(id: string): Promise<void> {

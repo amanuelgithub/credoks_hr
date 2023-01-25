@@ -90,6 +90,19 @@ export class CaslAbilityFactory {
       can(Action.Update, EmergencyContact);
       can(Action.Read, EmergencyContact);
       can(Action.Delete, EmergencyContact);
+
+      // QUALIFICATIONS
+      can(Action.Manage, Qualification);
+      can(Action.Create, Qualification);
+      can(Action.Update, Qualification);
+      can(Action.Read, Qualification);
+      can(Action.Delete, Qualification);
+
+      // EXPERIENCE
+      can(Action.Manage, Experience);
+      can(Action.Create, Experience);
+      can(Action.Update, Experience);
+      can(Action.Read, Experience);
     } else if (user?.type === UserTypeEnum.HR) {
       // EMPLOYEE
       // can only read,create, and update if only employee's company === managers company

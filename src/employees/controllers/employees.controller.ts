@@ -30,6 +30,7 @@ import path = require('path');
 import { join } from 'path';
 import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateEmploymentStatusDto } from '../dto/update-employment-status.dto';
 
 /**
  * used to store the uploaded profileImage to the
@@ -121,6 +122,22 @@ export class EmployeesController {
       req.user,
       id,
       updateEmployeeDto,
+    );
+  }
+
+  @Patch('/:id/update-employement-status')
+  @UseGuards(AtGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Employee))
+  updateEmployementStatus(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() updateEmploymentStatusDto: UpdateEmploymentStatusDto,
+  ): Promise<Employee> {
+    console.log('updateEmploymentStatus', updateEmploymentStatusDto);
+    return this.employeesService.updateEmployementStatus(
+      req.user,
+      id,
+      updateEmploymentStatusDto,
     );
   }
 
