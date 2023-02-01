@@ -50,6 +50,23 @@ export const storageEmpProfileImage = {
   }),
 };
 
+/**
+ * used to store the uploaded employee cv
+ */
+export const storageEmpCV = {
+  storage: diskStorage({
+    destination: './uploads/cv',
+    filename: (req, file, cb) => {
+      const filename: string =
+        path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+
+      const extension: string = path.parse(file.originalname).ext;
+
+      cb(null, `${filename}${extension}`);
+    },
+  }),
+};
+
 @Controller('employees')
 export class EmployeesController {
   constructor(private readonly employeesService: EmployeesService) {}
@@ -162,6 +179,20 @@ export class EmployeesController {
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
     return this.employeesService.changePassword(id, changePasswordDto);
+  }
+
+  @Post('/:id/upload-cv')
+  @UseGuards(AtGuard)
+  @UseInterceptors(FileInterceptor('file', storageEmpCV))
+  uploadEmployeeCV(@Param('id') id: string, @UploadedFile() file) {
+    return this.employeesService.uploadEmployeeCV(id, {
+      cv: file.filename,
+    });
+  }
+
+  @Get('/cv/:cv_name')
+  findEmployeeCV(@Param('cv_name') cv_name, @Response() res): Promise<any> {
+    return res.sendFile(join(process.cwd(), 'uploads/cv/' + cv_name));
   }
 
   @Post('upload-profile-img/:id')

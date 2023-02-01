@@ -15,6 +15,7 @@ import { ExperiencesService } from './services/experiences.service';
 import { ExperiencesController } from './controllers/experiences.controller';
 import { Experience } from './entities/experience.entity';
 import { EmployeesReportService } from './services/employees-report.service';
+import { TasksService } from './services/TasksService';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { EmployeesReportService } from './services/employees-report.service';
     ExperiencesController,
   ],
   providers: [
+    TasksService,
     EmployeesService,
     QualificationsService,
     EmergencyContactsService,

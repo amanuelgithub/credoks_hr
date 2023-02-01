@@ -13,9 +13,12 @@ import { PayrollModule } from './payroll/payroll.module';
 import { CaslModule } from './casl/casl.module';
 import { ReportsModule } from './reports/reports.module';
 import { PayModule } from './pay/pay.module';
+import { ScheduleModule } from '@nestjs/schedule/dist';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
+
     ConfigModule.forRoot({
       envFilePath: `${process.cwd()}/env/stage.${process.env.STAGE}.env`,
       // load: Object.values([DatabaseConfig, appConfig]),

@@ -259,6 +259,14 @@ export class EmployeesService {
     return await this.employeesRepository.save(employee);
   }
 
+  // upload employee cv
+  async uploadEmployeeCV(id: string, cv: { cv: any }): Promise<any> {
+    const employee = await this.findEmployeeById(id);
+    employee.cv = cv.cv;
+
+    return await this.employeesRepository.save(employee);
+  }
+
   // upload profile images
   async uploadProfileImage(
     id: string,

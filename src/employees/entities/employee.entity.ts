@@ -76,6 +76,9 @@ export class Employee implements IEmployee {
   dateOfJoining: string;
 
   @Column({ nullable: true })
+  cv?: string;
+
+  @Column({ nullable: true })
   confirmationDate: string;
 
   @Column()
@@ -159,6 +162,7 @@ interface IEmployee {
   employmentStatus: EmploymentStatusEnum;
   maritalStatus: MaritalStatusEnum;
   dateOfJoining: string;
+  cv?: string;
   confirmationDate: string;
   tinNumber: string;
   bankName: string;
