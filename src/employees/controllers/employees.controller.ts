@@ -102,7 +102,7 @@ export class EmployeesController {
     return this.employeesService.findEmployeesInCompanies();
   }
 
-  // returns all employees based on the requesting employee company
+  // returns all employees based on the requesting employee's company
   @Get('/company/:companyId')
   @UseGuards(AtGuard)
   async findEmployeesByCompany(
@@ -113,6 +113,21 @@ export class EmployeesController {
       req.user,
       companyId,
     );
+
+    return employees;
+  }
+
+  @Get('/company/:companyId/probation-completed')
+  @UseGuards(AtGuard)
+  async findEmployeesWithCompletedProbationTimeOfACompany(
+    @Req() req,
+    @Param('companyId') companyId: string,
+  ): Promise<Employee[]> {
+    const employees =
+      await this.employeesService.findEmployeesWithCompletedProbationTimeOfACompany(
+        req.user,
+        companyId,
+      );
 
     return employees;
   }

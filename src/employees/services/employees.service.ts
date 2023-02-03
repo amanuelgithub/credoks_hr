@@ -2,6 +2,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,6 +18,7 @@ import { ForbiddenError } from '@casl/ability';
 import { EmploymentStatusEnum } from '../enums/employment-status.enum';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { UpdateEmploymentStatusDto } from '../dto/update-employment-status.dto';
+import { PROBATION_PERIOD } from '../constants';
 
 export interface ICompanyEmployeeReport {
   companyName: string;
@@ -31,12 +33,16 @@ export interface ICompanyEmployeeReport {
 
 @Injectable()
 export class EmployeesService {
+  private logger: Logger;
+
   constructor(
     @InjectRepository(Employee)
     private employeesRepository: Repository<Employee>,
     private companyService: CompaniesService,
     private caslAbilityFactory: CaslAbilityFactory,
-  ) {}
+  ) {
+    this.logger = new Logger();
+  }
 
   async createAdmin(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
     const { email, password } = createEmployeeDto;
@@ -55,6 +61,7 @@ export class EmployeesService {
     }
   }
 
+  // create an employee and associate it with the company entity
   async createEmployeeInCompany(
     reqestingUser: any,
     companyId: string,
@@ -96,6 +103,7 @@ export class EmployeesService {
     }
   }
 
+  // returns all employees in all the companies
   async findEmployeesInCompanies(): Promise<Employee[]> {
     await this.companiesEmployeesReport();
 
@@ -108,6 +116,7 @@ export class EmployeesService {
     return employees;
   }
 
+  // returns all employees of spcefic company
   async findEmployeesByCompany(
     requestingUser: any,
     companyId: string,
@@ -141,6 +150,8 @@ export class EmployeesService {
       throw new ForbiddenException();
     }
 
+    this.logger.debug('employees of a company: ', filteredEmployees);
+
     if (!filteredEmployees) {
       throw new NotFoundException('Employees Not Found!');
     }
@@ -148,6 +159,26 @@ export class EmployeesService {
     return filteredEmployees;
   }
 
+  // returns all employees of a company that have a `employementStatus` type of
+  // 'Probation' but have completed their probation time.
+  async findEmployeesWithCompletedProbationTimeOfACompany(
+    requestingUser: any,
+    companyId: string,
+  ): Promise<Employee[]> {
+    const employeesInCompany = await this.findEmployeesByCompany(
+      requestingUser,
+      companyId,
+    );
+
+    const empWithProbationCompleted =
+      this.getEmployeesWithProbationTimeCompleted(employeesInCompany);
+
+    this.logger.debug('Probation completed', empWithProbationCompleted);
+
+    return empWithProbationCompleted;
+  }
+
+  // returns employee by on the condition that the requester has the autority
   async findOneEmployee(requestingUser: any, id: string): Promise<Employee> {
     const employee = await this.findEmployeeById(id);
 
@@ -488,5 +519,36 @@ export class EmployeesService {
     }
 
     return reportContainerArray;
+  }
+
+  //==================================================//
+  //              UTILITY FUNCTIONS                   //
+  //==================================================//
+  getEmployeesWithProbationTimeCompleted(employees: Employee[]): Employee[] {
+    const empWithProbationCompleted: Employee[] = [];
+    for (const employee of employees) {
+      if (employee.employmentStatus === EmploymentStatusEnum.PROBAATION) {
+        // day since registration is the total number of days from registration till current date
+        const registrationDate = employee.createdAt;
+        const currentDate = new Date(Date.now());
+
+        // To calculate the time difference of two dates
+        const differenceInTime =
+          currentDate.getTime() - registrationDate.getTime();
+
+        // To calculate the no. of days between two dates
+        const differenceInDays = Math.floor(
+          differenceInTime / (1000 * 3600 * 24),
+        );
+
+        if (PROBATION_PERIOD - differenceInDays <= 0) {
+          empWithProbationCompleted.push(employee);
+        }
+      }
+    }
+
+    this.logger.debug('empWithProbationCompleted', empWithProbationCompleted);
+
+    return empWithProbationCompleted;
   }
 }
