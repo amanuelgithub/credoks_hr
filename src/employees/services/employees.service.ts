@@ -131,9 +131,10 @@ export class EmployeesService {
     // check if employee UserTypeEnum is either `MANAGER` or `ADMIN` or `HR`
     if (requestingEmployee.type === UserTypeEnum.ADMIN) {
       // just filter employees list by the provided companyId parameter
-      filteredEmployees = await this.employeesRepository.find({
-        where: { company: selectedCompany },
-      });
+      filteredEmployees = await this.employeesRepository.find();
+      // filteredEmployees = await this.employeesRepository.find({
+      //   where: { company: selectedCompany },
+      // });
     } else if (
       (requestingEmployee.type === UserTypeEnum.MANAGER &&
         requestingEmployee.company.id === selectedCompany.id) ||
