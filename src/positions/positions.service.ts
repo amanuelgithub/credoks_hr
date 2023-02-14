@@ -85,9 +85,7 @@ export class PositionsService {
 
     position.title = title;
 
-    this.positionsRepository.save(position);
-
-    return position;
+    return await this.positionsRepository.save(position);
   }
 
   async remove(id: string): Promise<void> {

@@ -67,7 +67,7 @@ export class PositionsController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Position))
   updatePosition(
     @Param('id') id: string,
-    updatePositionDto: UpdatePositionDto,
+    @Body() updatePositionDto: UpdatePositionDto,
   ): Promise<Position> {
     return this.positionsService.updatePosition(id, updatePositionDto);
   }

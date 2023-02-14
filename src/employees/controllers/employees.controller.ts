@@ -117,7 +117,7 @@ export class EmployeesController {
     return employees;
   }
 
-  @Get('/company/:companyId/probation-completed')
+  @Get('/company/probation-completed/:companyId')
   @UseGuards(AtGuard)
   async findEmployeesWithCompletedProbationTimeOfACompany(
     @Req() req,

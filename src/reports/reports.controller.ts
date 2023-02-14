@@ -18,4 +18,15 @@ export class ReportsController {
   ): Promise<ITotalCompanyStats> {
     return this.reportsService.getTotalStatsOfCompany(companyId);
   }
+
+  @Get('/companies-new-employees-report/:year')
+  getAllCompaniesNewEmployeesReport(@Param('year') year: number): Promise<any> {
+    console.log('year: ', year);
+    const newEmployees =
+      this.reportsService.getCompaniesNewEmployeeReport(year);
+
+    return newEmployees;
+  }
+
+  // companies new employees
 }

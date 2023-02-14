@@ -18,4 +18,11 @@ export class CompaniesReportService {
 
     return totalCompanies;
   }
+
+  // returns Array<Companies>
+  async getCompanies(): Promise<Company[]> {
+    const companies: Company[] = await this.companiesReportService.find();
+
+    return companies;
+  }
 }
