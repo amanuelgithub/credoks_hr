@@ -291,6 +291,14 @@ export class EmployeesService {
     return await this.employeesRepository.save(employee);
   }
 
+  async updateIsDepartmentHeadState(
+    employee: Employee,
+    isDepartmentHead: boolean,
+  ): Promise<void> {
+    employee.isDepartmentHead = isDepartmentHead;
+    await this.employeesRepository.save(employee);
+  }
+
   // upload employee cv
   async uploadEmployeeCV(id: string, cv: { cv: any }): Promise<any> {
     const employee = await this.findEmployeeById(id);

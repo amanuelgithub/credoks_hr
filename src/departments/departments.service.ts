@@ -9,9 +9,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
 import { CompaniesService } from 'src/companies/companies.service';
 import { UserTypeEnum } from 'src/employees/enums/user-type.enum';
+import { EmployeesService } from 'src/employees/services/employees.service';
 import { Repository } from 'typeorm';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
+import { UpdateIsDepartmentDto } from './dto/update-is-department.dto';
 import { Department } from './entities/department.entity';
 
 @Injectable()
@@ -20,6 +22,7 @@ export class DepartmentsService {
     @InjectRepository(Department)
     private departmentsRepository: Repository<Department>,
     private companiesService: CompaniesService,
+    private employeeService: EmployeesService,
     private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
@@ -86,6 +89,7 @@ export class DepartmentsService {
 
     const companyDepartments = await this.departmentsRepository
       .createQueryBuilder('department')
+      .leftJoinAndSelect('department.departmentHead', 'departmentHead')
       .where('department.companyId = :companyId', { companyId })
       .getMany();
 
@@ -148,6 +152,26 @@ export class DepartmentsService {
     if (result.affected === 0) {
       throw new NotFoundException('Department Not Found!');
     }
+  }
+
+  async assignDepartmentHead(
+    departmentId: string,
+    updateIsDepartmentDto: UpdateIsDepartmentDto,
+  ): Promise<void> {
+    const { employeeId, isDepartmentHead } = updateIsDepartmentDto;
+
+    const department = await this.findDepartmentById(departmentId);
+    const employee = await this.employeeService.findEmployeeById(employeeId);
+
+    department.departmentHead = employee;
+    await this.departmentsRepository.save(department);
+
+    await this.employeeService.updateIsDepartmentHeadState(
+      employee,
+      isDepartmentHead,
+    );
+
+    return;
   }
 
   //=================================================================================//

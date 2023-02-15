@@ -5,8 +5,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -21,6 +23,10 @@ export class Department implements IDepartment {
 
   @Column()
   description: string;
+
+  @OneToOne(() => Employee, { eager: true })
+  @JoinColumn()
+  departmentHead: Employee;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -46,6 +52,7 @@ export interface IDepartment {
   id: string;
   name: string;
   description: string;
+  departmentHead: Employee;
   createdAt: Date;
   updatedAt: Date;
 }

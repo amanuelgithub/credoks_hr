@@ -16,6 +16,7 @@ import { PoliciesGuard } from 'src/casl/policies.guard';
 import { DepartmentsService } from './departments.service';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
+import { UpdateIsDepartmentDto } from './dto/update-is-department.dto';
 import { Department } from './entities/department.entity';
 
 @Controller('departments')
@@ -85,5 +86,17 @@ export class DepartmentsController {
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
     return this.departmentsService.remove(id);
+  }
+
+  // assign a departmentHead for a department
+  @Patch('/assign-head/:departmentId')
+  assignDepartmentHead(
+    @Param('departmentId') departmentId: string,
+    @Body() updateIsDepartmentDto: UpdateIsDepartmentDto,
+  ): Promise<void> {
+    return this.departmentsService.assignDepartmentHead(
+      departmentId,
+      updateIsDepartmentDto,
+    );
   }
 }

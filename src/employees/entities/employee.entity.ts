@@ -105,6 +105,9 @@ export class Employee implements IEmployee {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column({ default: false })
+  isDepartmentHead: boolean;
+
   @Column({ nullable: true })
   companyId: string;
 
@@ -172,4 +175,5 @@ interface IEmployee {
   eligibleForPayment: boolean;
   createdAt: Date;
   updatedAt: Date;
+  isDepartmentHead: boolean;
 }
