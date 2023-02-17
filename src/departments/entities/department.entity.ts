@@ -24,7 +24,7 @@ export class Department implements IDepartment {
   @Column()
   description: string;
 
-  @OneToOne(() => Employee, { eager: true })
+  @OneToOne(() => Employee, { eager: true, nullable: true })
   @JoinColumn()
   departmentHead: Employee;
 

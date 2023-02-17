@@ -99,4 +99,12 @@ export class DepartmentsController {
       updateIsDepartmentDto,
     );
   }
+
+  //  delete a department head
+  @Delete('/delete-head/:departmentId')
+  deleteDepartmentHead(
+    @Param('departmentId') departmentId: string,
+  ): Promise<void> {
+    return this.departmentsService.deleteDepartmentHead(departmentId);
+  }
 }

@@ -174,6 +174,13 @@ export class DepartmentsService {
     return;
   }
 
+  async deleteDepartmentHead(departmentId: string): Promise<void> {
+    const department = await this.findDepartmentById(departmentId);
+    department.departmentHead = null;
+
+    await this.departmentsRepository.save(department);
+  }
+
   //=================================================================================//
   // Methods below this lien are not directly being used by the employees-controller //
   //=================================================================================//
@@ -182,7 +189,7 @@ export class DepartmentsService {
       where: { name },
     });
 
-    return employee ? true : false;
+    return !!employee;
   }
 
   async findDepartmentById(id: string): Promise<Department> {
