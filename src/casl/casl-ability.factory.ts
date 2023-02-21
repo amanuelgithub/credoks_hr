@@ -16,6 +16,7 @@ import { UserTypeEnum } from 'src/employees/enums/user-type.enum';
 import { Location } from 'src/locations/entities/location.entity';
 import { Payroll } from 'src/payroll/entities/payroll.entity';
 import { Position } from 'src/positions/entities/position.entity';
+import { SalaryRevision } from '../salary-revision/entities/salary-revision.entity';
 
 export enum Action {
   Manage = 'manage',
@@ -36,6 +37,7 @@ type Subjects =
       | typeof Qualification
       | typeof EmergencyContact
       | typeof Experience
+      | typeof SalaryRevision
     >
   | 'all';
 
@@ -50,7 +52,7 @@ export class CaslAbilityFactory {
     // console.log('ability factory', user);
 
     if (user?.type === UserTypeEnum.ADMIN) {
-      // gives fullright over-all subjects
+      // gives full-right over-all subjects
       can(Action.Manage, 'all');
     } else if (user?.type === UserTypeEnum.MANAGER) {
       // EMPLOYEE
@@ -61,7 +63,7 @@ export class CaslAbilityFactory {
       cannot(Action.Delete, Employee);
 
       // DEPARTMENT
-      // manager  can create, update and read a deparrtment in his/her company
+      // manager  can create, update and read a department in his/her company
       cannot(Action.Manage, Department);
       can(Action.Create, Department, { companyId: { $eq: user.companyId } });
       can(Action.Update, Department, { companyId: { $eq: user.companyId } });
@@ -84,25 +86,11 @@ export class CaslAbilityFactory {
       can(Action.Read, Position);
       can(Action.Delete, Position);
 
-      // EMERGENCY CONTACT INFO
-      // manager can create, read, update and delete emergency contact fora an employee
-      can(Action.Create, EmergencyContact);
-      can(Action.Update, EmergencyContact);
-      can(Action.Read, EmergencyContact);
-      can(Action.Delete, EmergencyContact);
-
-      // QUALIFICATIONS
-      can(Action.Manage, Qualification);
-      can(Action.Create, Qualification);
-      can(Action.Update, Qualification);
-      can(Action.Read, Qualification);
-      can(Action.Delete, Qualification);
-
-      // EXPERIENCE
-      can(Action.Manage, Experience);
-      can(Action.Create, Experience);
-      can(Action.Update, Experience);
-      can(Action.Read, Experience);
+      // SALARY REVISION
+      // manager can approve, view all salary revisions, view all of an
+      // employee's salary's salary revisions
+      can(Action.Update, SalaryRevision);
+      can(Action.Read, SalaryRevision);
     } else if (user?.type === UserTypeEnum.HR) {
       // EMPLOYEE
       // can only read,create, and update if only employee's company === managers company
@@ -138,9 +126,14 @@ export class CaslAbilityFactory {
       can(Action.Create, Experience);
       can(Action.Update, Experience);
       can(Action.Read, Experience);
+
+      // SALARY REVISION
+      // HR can create, view all and single employee salary revisions information
+      can(Action.Create, SalaryRevision);
+      can(Action.Read, SalaryRevision);
     } else if (user?.type === UserTypeEnum.EMPLOYEE) {
       // cannot(Action.Manage, Employee);
-      // Employee can only read and update their own informations
+      // Employee can only read and update their own information
       // can(Action.Read, Employee, { id: { $eq: user.sub } });
       // can(Action.Update, Employee, { id: { $eq: user.sub } });
       // cannot(Action.Delete, Employee).because(

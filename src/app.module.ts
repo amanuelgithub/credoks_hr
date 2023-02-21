@@ -14,6 +14,7 @@ import { CaslModule } from './casl/casl.module';
 import { ReportsModule } from './reports/reports.module';
 import { PayModule } from './pay/pay.module';
 import { ScheduleModule } from '@nestjs/schedule/dist';
+import { SalaryRevisionModule } from './salary-revision/salary-revision.module';
 
 @Module({
   imports: [
@@ -64,6 +65,8 @@ import { ScheduleModule } from '@nestjs/schedule/dist';
     ReportsModule,
 
     PayModule,
+
+    SalaryRevisionModule,
   ],
 })
 export class AppModule {}

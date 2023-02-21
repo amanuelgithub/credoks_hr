@@ -19,6 +19,7 @@ import { UserTypeEnum } from '../enums/user-type.enum';
 import { EmergencyContact } from './emergency-contact.entity';
 import { Experience } from './experience.entity';
 import { Qualification } from './qualification.entity';
+import { SalaryRevision } from '../../salary-revision/entities/salary-revision.entity';
 
 @Entity()
 export class Employee implements IEmployee {
@@ -147,6 +148,10 @@ export class Employee implements IEmployee {
   @OneToMany(() => Pay, (pay) => pay.employee)
   @JoinColumn()
   pays: Pay[];
+
+  // salary revision with maker and checker
+  @OneToMany(() => SalaryRevision, (salaryRevision) => salaryRevision.employee)
+  salaryRevisions: SalaryRevision[];
 }
 
 interface IEmployee {

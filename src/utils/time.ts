@@ -1,5 +1,9 @@
+export function getCurrentDate(): Date {
+  return new Date();
+}
+
 export function getMonths(): any {
-  const months = [
+  return [
     'Jan',
     'Feb',
     'Mar',
@@ -13,8 +17,6 @@ export function getMonths(): any {
     'Nov',
     'Dec',
   ];
-
-  return months;
 }
 
 export function getYearInNum(date: Date): number {
