@@ -1,20 +1,14 @@
-import { IsDate, IsNotEmpty, IsString, Matches } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { SalaryRevisionStatusEnum } from '../salary-revision-status.enum';
 
 export class ApproveSalaryRevisionDto {
   @IsNotEmpty()
-  @IsString()
-  employeeId: string;
-
-  @IsNotEmpty()
-  @Matches(SalaryRevisionStatusEnum.APPROVED)
+  @IsEnum(SalaryRevisionStatusEnum, {
+    message: "revisionStatus Must be Either 'APPROVE' or 'DECLINED' ",
+  })
   revisionStatus: SalaryRevisionStatusEnum;
 
   @IsNotEmpty()
   @IsString()
   checkerEmployeeId: string;
-
-  @IsNotEmpty()
-  @IsDate()
-  checkerDate: Date;
 }

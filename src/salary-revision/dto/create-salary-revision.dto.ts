@@ -1,11 +1,4 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  Matches,
-} from 'class-validator';
-import { SalaryRevisionStatusEnum } from '../salary-revision-status.enum';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateSalaryRevisionDto {
   @IsNotEmpty()
@@ -27,10 +20,6 @@ export class CreateSalaryRevisionDto {
   @IsNotEmpty()
   @IsString()
   comments: string;
-
-  @IsNotEmpty()
-  @Matches(SalaryRevisionStatusEnum.PENDING)
-  revisionStatus: SalaryRevisionStatusEnum;
 
   // @IsNotEmpty()
   // @IsString()

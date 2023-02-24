@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -22,13 +23,13 @@ export class SalaryRevision implements ISalaryRevision {
   @Column({ default: SalaryRevisionStatusEnum.PENDING })
   revisionStatus: SalaryRevisionStatusEnum;
 
-  @Column()
+  @Column({ nullable: true })
   makerEmployeeId: string;
 
   @Column({ nullable: true })
   checkerEmployeeId: string;
 
-  @Column()
+  @Column({ nullable: true })
   makerDate: Date;
 
   @Column({ nullable: true })
@@ -50,12 +51,6 @@ export class SalaryRevision implements ISalaryRevision {
     eager: true,
   })
   employee: Employee;
-
-  @OneToOne(() => Employee)
-  makerEmployee: Employee;
-
-  @OneToOne(() => Employee, { nullable: true })
-  checkerEmployee: Employee;
 }
 
 export interface ISalaryRevision {

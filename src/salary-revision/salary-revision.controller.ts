@@ -31,7 +31,7 @@ export class SalaryRevisionController {
     return this.salaryRevisionService.create(createSalaryRevisionDto);
   }
 
-  @Patch(':id/approve')
+  @Patch('/:id/approve-decline')
   @UseGuards(AtGuard, PoliciesGuard)
   @CheckPolicies((ability: Ability) =>
     ability.can(Action.Update, SalaryRevision),

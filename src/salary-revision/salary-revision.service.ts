@@ -7,14 +7,12 @@ import { EmployeesService } from '../employees/services/employees.service';
 import {
   ConflictException,
   NotFoundException,
-  InternalServerErrorException,
   ForbiddenException,
 } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getCurrentDate } from '../utils/time';
 import { SalaryRevisionStatusEnum } from './salary-revision-status.enum';
-import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
-import { ForbiddenError } from '@casl/ability';
+import { CaslAbilityFactory } from 'src/casl/casl-ability.factory';
 
 @Injectable()
 export class SalaryRevisionService {
@@ -31,28 +29,25 @@ export class SalaryRevisionService {
     const {
       employeeId,
       newSalary,
-      revisionStatus,
       makerEmployeeId,
-      // makerDate,
       reasonForRevision,
       comments,
     } = createSalaryRevisionDto;
 
-    if (await this.empHavePendingSalaryRevision(employeeId)) {
+    const empHavePendingSalRevs = await this.empHavePendingSalaryRevision(
+      employeeId,
+    );
+    if (empHavePendingSalRevs) {
       throw new ConflictException(
         'Pending Salary Revision for this employee already exists!',
       );
     }
 
     const employee = await this.employeeService.findEmployeeById(employeeId);
-    const makerEmployee = await this.employeeService.findEmployeeById(
-      makerEmployeeId,
-    );
 
     const salaryRevision = this.salaryRevisionRepository.create({
       employeeId,
       newSalary,
-      revisionStatus,
       makerEmployeeId,
       makerDate: getCurrentDate(),
       reasonForRevision,
@@ -60,7 +55,6 @@ export class SalaryRevisionService {
     });
 
     salaryRevision.employee = employee;
-    salaryRevision.makerEmployee = makerEmployee;
 
     return await this.salaryRevisionRepository.save(salaryRevision);
   }
@@ -69,20 +63,13 @@ export class SalaryRevisionService {
     salaryRevisionId: string,
     approveSalaryRevisionDto: ApproveSalaryRevisionDto,
   ) {
-    const { employeeId, checkerEmployeeId, checkerDate, revisionStatus } =
-      approveSalaryRevisionDto;
+    const { checkerEmployeeId, revisionStatus } = approveSalaryRevisionDto;
 
     const salaryRevision = await this.findOne(salaryRevisionId);
 
-    const checkerEmployee = await this.employeeService.findEmployeeById(
-      employeeId,
-    );
-
     salaryRevision.checkerEmployeeId = checkerEmployeeId;
     salaryRevision.revisionStatus = revisionStatus;
-    salaryRevision.checkerDate = checkerDate;
-
-    salaryRevision.checkerEmployee = checkerEmployee;
+    salaryRevision.checkerDate = getCurrentDate();
 
     await this.salaryRevisionRepository.save(salaryRevision);
   }
@@ -203,10 +190,12 @@ export class SalaryRevisionService {
     const empSalaryRevisions = await this.findEmployeeSalaryRevisions(
       employeeId,
     );
-    const pendingRevision = empSalaryRevisions.find(
-      (revision) => revision.employeeId === employeeId,
+
+    const pendingRevision = empSalaryRevisions.filter(
+      (revision) =>
+        revision.revisionStatus === SalaryRevisionStatusEnum.PENDING,
     );
 
-    return !!pendingRevision;
+    return pendingRevision.length === 0 ? false : true;
   }
 }
