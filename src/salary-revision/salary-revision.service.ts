@@ -7,9 +7,14 @@ import { EmployeesService } from '../employees/services/employees.service';
 import {
   ConflictException,
   NotFoundException,
+  InternalServerErrorException,
+  ForbiddenException,
 } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getCurrentDate } from '../utils/time';
+import { SalaryRevisionStatusEnum } from './salary-revision-status.enum';
+import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
+import { ForbiddenError } from '@casl/ability';
 
 @Injectable()
 export class SalaryRevisionService {
@@ -17,6 +22,7 @@ export class SalaryRevisionService {
     @InjectRepository(SalaryRevision)
     private salaryRevisionRepository: Repository<SalaryRevision>,
     private readonly employeeService: EmployeesService,
+    private readonly caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   async create(
@@ -91,15 +97,77 @@ export class SalaryRevisionService {
     return salaryRevisions;
   }
 
+  async findAllSalaryRevisionsOfCompany(
+    requestingUser: any,
+    companyId: string,
+  ): Promise<SalaryRevision[]> {
+    const { companyId: reqUserCompanyId } = requestingUser;
+
+    if (reqUserCompanyId !== companyId) {
+      throw new ForbiddenException();
+    }
+
+    const salaryRevisions = await this.salaryRevisionRepository.find();
+
+    const companySalaryRevisions: SalaryRevision[] = salaryRevisions.filter(
+      (salaryRevision) => salaryRevision.employee.companyId === companyId,
+    );
+
+    if (!companySalaryRevisions) {
+      throw new NotFoundException(
+        'No salary revision for this company is found!',
+      );
+    }
+
+    return companySalaryRevisions;
+  }
+
+  async findAllPendingSalaryRevisionsOfCompany(
+    requestingUser: any,
+    companyId: string,
+  ): Promise<SalaryRevision[]> {
+    const { companyId: reqUserCompanyId } = requestingUser;
+
+    if (reqUserCompanyId !== companyId) {
+      throw new ForbiddenException();
+    }
+
+    const pendingSalaryRevisions = await this.salaryRevisionRepository.find({
+      where: { revisionStatus: SalaryRevisionStatusEnum.PENDING },
+    });
+
+    const pendingCompanySalaryRevisions: SalaryRevision[] =
+      pendingSalaryRevisions.filter(
+        (salaryRevision) => salaryRevision.employee.companyId === companyId,
+      );
+
+    if (!pendingCompanySalaryRevisions) {
+      throw new NotFoundException('No pending salary revision is found!');
+    }
+
+    return pendingCompanySalaryRevisions;
+  }
+
   async findEmployeeSalaryRevisions(
     employeeId: string,
+    requestingUser?: any,
   ): Promise<SalaryRevision[]> {
+    const { companyId: reqUserCompanyId } = requestingUser;
+
+    const employee = await this.employeeService.findEmployeeById(employeeId);
+
+    if (reqUserCompanyId !== employee.companyId) {
+      throw new ForbiddenException();
+    }
+
     const empSalaryRevisions = await this.salaryRevisionRepository.find({
       where: { employeeId },
     });
 
     if (!empSalaryRevisions) {
-      throw new NotFoundException('No salary revision is found!');
+      throw new NotFoundException(
+        'No salary revision is found for this employee!',
+      );
     }
 
     return empSalaryRevisions;
@@ -121,6 +189,7 @@ export class SalaryRevisionService {
     return `This action removes a #${id} salaryRevision`;
   }
 
+  // helper functions
   async empHavePendingSalaryRevision(employeeId: string): Promise<boolean> {
     const empSalaryRevisions = await this.findEmployeeSalaryRevisions(
       employeeId,

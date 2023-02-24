@@ -46,7 +46,9 @@ export class SalaryRevision implements ISalaryRevision {
   doc: string;
 
   // entity relationship related properties
-  @ManyToOne(() => Employee, (employee) => employee.salaryRevisions)
+  @ManyToOne(() => Employee, (employee) => employee.salaryRevisions, {
+    eager: true,
+  })
   employee: Employee;
 
   @OneToOne(() => Employee)
