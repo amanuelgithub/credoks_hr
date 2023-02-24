@@ -148,16 +148,25 @@ export class SalaryRevisionService {
     return pendingCompanySalaryRevisions;
   }
 
-  async findEmployeeSalaryRevisions(
+  async findAllEmployeeSalaryRevisions(
+    employeeId: string,
+    requestingUser: any,
+  ): Promise<SalaryRevision[]> {
+    console.log('employeeId', employeeId);
+    return await this.findEmployeeSalaryRevisions(employeeId, requestingUser);
+  }
+
+  private async findEmployeeSalaryRevisions(
     employeeId: string,
     requestingUser?: any,
   ): Promise<SalaryRevision[]> {
-    const { companyId: reqUserCompanyId } = requestingUser;
-
     const employee = await this.employeeService.findEmployeeById(employeeId);
 
-    if (reqUserCompanyId !== employee.companyId) {
-      throw new ForbiddenException();
+    if (requestingUser) {
+      const { companyId: reqUserCompanyId } = requestingUser;
+      if (reqUserCompanyId !== employee.companyId) {
+        throw new ForbiddenException();
+      }
     }
 
     const empSalaryRevisions = await this.salaryRevisionRepository.find({

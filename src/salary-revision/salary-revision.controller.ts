@@ -31,7 +31,7 @@ export class SalaryRevisionController {
     return this.salaryRevisionService.create(createSalaryRevisionDto);
   }
 
-  @Patch('/approve')
+  @Patch(':id/approve')
   @UseGuards(AtGuard, PoliciesGuard)
   @CheckPolicies((ability: Ability) =>
     ability.can(Action.Update, SalaryRevision),
@@ -85,9 +85,9 @@ export class SalaryRevisionController {
     @Req() req,
     @Param('employeeId') employeeId: string,
   ): Promise<SalaryRevision[]> {
-    return this.salaryRevisionService.findEmployeeSalaryRevisions(
-      req.user,
+    return this.salaryRevisionService.findAllEmployeeSalaryRevisions(
       employeeId,
+      req.user,
     );
   }
 
